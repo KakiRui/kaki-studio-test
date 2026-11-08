@@ -42,6 +42,7 @@
     countButton.classList.toggle('active', !isImages);
     imageButton.setAttribute('aria-selected', String(isImages));
     countButton.setAttribute('aria-selected', String(!isImages));
+    document.title = isImages ? 'KAKI Studio · 图片工作台' : 'KAKI Studio · 统计中心';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
