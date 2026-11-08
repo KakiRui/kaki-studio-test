@@ -545,7 +545,7 @@
         document.getElementById('aiTargetBatch').innerText = batches[currentIdx].id;
         const msg = document.getElementById('statusMsg');
         msg.style.display = selectedNums.length > 0 ? 'block' : 'none';
-        msg.innerText = `🎯 已选中 [ ${selectedNums.join(',')} ]，点人名绑定`;
+        msg.innerHTML = `<span class="selection-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5 10 16l8-9"/></svg></span><span>已选中 ${selectedNums.join(', ')} 号，点击顾客完成绑定</span>`;
         const occupied = new Set(batches[currentIdx].customers.flatMap(customer => customer.nums.flat())).size;
         const customersWithNumbers = batches[currentIdx].customers.filter(customer => customer.nums.flat().length > 0).length;
         const summary = {
@@ -586,22 +586,22 @@
             if(selectedNums.length > 0) card.onclick = () => bindToCustomer(cIdx);
             const tags = c.nums.map((batch, bIdx) => 
                 batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
-            ).join('<span style="color:var(--m-soft);margin:0 5px;">|</span>');
+            ).join('<span class="tag-separator">·</span>');
             const nameEditor = editingCustomerIndex === cIdx
                 ? `<input type="text" id="customerNameEditor" class="cust-name-input" maxlength="60" value="${escapeAiHtml(c.name)}" placeholder="输入用户名" onclick="event.stopPropagation()" onkeydown="handleCustomerNameKey(event, ${cIdx})" onblur="finishCustomerNameEdit(${cIdx}, true)">`
-                : `<button type="button" class="cust-name-btn" onclick="handleCustomerNameTap(event, ${cIdx})" title="双击修改用户名">👤 ${escapeAiHtml(c.name)}</button>`;
+                : `<button type="button" class="cust-name-btn" onclick="handleCustomerNameTap(event, ${cIdx})" title="双击修改用户名"><span class="customer-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19c.6-4 2.8-6 6.5-6s5.9 2 6.5 6"/></svg></span>${escapeAiHtml(c.name)}</button>`;
 
             card.innerHTML = `
                 <div class="cust-header">
                     <div class="cust-title">
                         ${nameEditor}
-                        <span class="cust-count-badge" style="font-size:11px; background:var(--m-yellow-act); padding:1px 6px; border-radius:10px; margin-left:5px;">${c.nums.flat().length}张</span>
+                        <span class="cust-count-badge">${c.nums.flat().length} 张</span>
                         <button class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</button>
                         <button class="sort-btn" onclick="event.stopPropagation(); sortCustomerNums(${cIdx})">排序</button>
                     </div>
-                    <span style="color:var(--m-soft); font-size:11px; flex-shrink:0;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
+                    <button class="cust-delete" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</button>
                 </div>
-                <div class="tag-box">${tags || '<small style="color:var(--m-soft)">点击绑定...</small>'}</div>
+                <div class="tag-box">${tags || '<small class="tag-empty">点击绑定号码...</small>'}</div>
             `;
             list.appendChild(card);
         });

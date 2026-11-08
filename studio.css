@@ -1,5 +1,5 @@
 .studio-switcher {
-  width: min(1240px, calc(100% - 48px));
+  width: min(500px, calc(100% - 48px));
   margin: 18px auto 0;
   padding: 4px;
   display: grid;
@@ -146,7 +146,7 @@
 
 @media (max-width: 760px) {
   .studio-switcher {
-    width: min(100% - 24px, 1240px);
+    width: min(100% - 48px, 500px);
   }
 
   .site-footer {

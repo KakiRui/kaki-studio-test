@@ -126,32 +126,40 @@
     }[char]));
   }
 
-  imageButton.addEventListener('click', () => switchWorkspace('images'));
-  countButton.addEventListener('click', () => switchWorkspace('counts'));
-  openCountButton.addEventListener('click', () => switchWorkspace('counts'));
+  function initStudioBridge() {
+    imageButton.addEventListener('click', () => switchWorkspace('images'));
+    countButton.addEventListener('click', () => switchWorkspace('counts'));
+    openCountButton.addEventListener('click', () => switchWorkspace('counts'));
 
-  batchSelect.addEventListener('change', () => {
-    if(linkToggle.checked) applyLinkedBatch();
-    else {
-      updateLinkedStatus();
-      persistLinkSettings();
+    batchSelect.addEventListener('change', () => {
+      if(linkToggle.checked) applyLinkedBatch();
+      else {
+        updateLinkedStatus();
+        persistLinkSettings();
+      }
+    });
+
+    linkToggle.addEventListener('change', () => {
+      if(linkToggle.checked) applyLinkedBatch();
+      else restoreManualSold();
+    });
+
+    window.addEventListener('kaki-studio:count-state', (event) => {
+      renderCountBatches(event.detail);
+    });
+    window.addEventListener('kaki-studio:images-changed', updateLinkedStatus);
+
+    const snapshot = window.KAKIStudioCountBridge?.getSnapshot?.();
+    if(snapshot) {
+      const saved = savedLinkSettings();
+      if(saved.enabled) linkToggle.checked = true;
+      renderCountBatches(snapshot);
     }
-  });
+  }
 
-  linkToggle.addEventListener('change', () => {
-    if(linkToggle.checked) applyLinkedBatch();
-    else restoreManualSold();
-  });
-
-  window.addEventListener('kaki-studio:count-state', (event) => {
-    renderCountBatches(event.detail);
-  });
-  window.addEventListener('kaki-studio:images-changed', updateLinkedStatus);
-
-  const snapshot = window.KAKIStudioCountBridge?.getSnapshot?.();
-  if(snapshot) {
-    const saved = savedLinkSettings();
-    if(saved.enabled) linkToggle.checked = true;
-    renderCountBatches(snapshot);
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStudioBridge);
+  } else {
+    initStudioBridge();
   }
 })();

@@ -7,8 +7,8 @@
   <meta name="description" content="KAKI Studio：本地图片水印、目录拼图与发售号码管理。">
   <title>KAKI Studio · 图片与发售管理</title>
   <link rel="stylesheet" href="styles.css?v=kaki-marks-1-13">
-  <link rel="stylesheet" href="studio.css?v=kaki-studio-3">
-  <link rel="stylesheet" href="count.css?v=kaki-studio-3">
+  <link rel="stylesheet" href="studio.css?v=kaki-studio-5">
+  <link rel="stylesheet" href="count.css?v=kaki-studio-4">
 </head>
 <body data-app-version="1.13">
   <header class="topbar">
@@ -986,21 +986,23 @@
         </div>
 
         <div class="stats-field-stack">
-          <div class="field-block">
-            <label for="totalNum">号码范围：1 到</label>
-            <input type="number" id="totalNum" value="50" min="1" max="1000" onchange="updateBatchTotal()">
-          </div>
-          <div class="field-block">
-            <label for="custInput">添加顾客</label>
-            <div class="stats-inline-field">
-              <input type="text" id="custInput" placeholder="输入顾客名字">
-              <button class="button primary compact" type="button" onclick="addCustomer()">添加</button>
+          <div class="stats-primary-fields">
+            <div class="field-block">
+              <label for="totalNum">号码范围</label>
+              <input type="number" id="totalNum" value="50" min="1" max="1000" onchange="updateBatchTotal()">
+            </div>
+            <div class="field-block">
+              <label for="custInput">添加顾客</label>
+              <div class="stats-inline-field">
+                <input type="text" id="custInput" placeholder="顾客名字">
+                <button class="button primary compact" type="button" onclick="addCustomer()">添加</button>
+              </div>
             </div>
           </div>
           <div class="field-block">
-            <label for="searchBar">查找顾客或号码</label>
+            <label for="searchBar">查找顾客</label>
             <div class="stats-inline-field">
-              <input type="text" id="searchBar" placeholder="输入名字或号码..." oninput="renderCustomers()">
+              <input type="text" id="searchBar" placeholder="输入顾客名字..." oninput="renderCustomers()">
               <button class="button secondary compact" type="button" onclick="clearFilter()">清除</button>
             </div>
           </div>
@@ -1009,7 +1011,7 @@
         <div class="stats-action-grid">
           <button class="button secondary compact" type="button" onclick="openResetBatchModal()">重置本档</button>
           <button class="button secondary compact danger-text" type="button" onclick="initSystem()">清空全部</button>
-          <button class="button primary stats-share-button" type="button" onclick="openShareModal()">生成顾客链接</button>
+          <button class="button primary stats-share-button" type="button" onclick="openShareModal()">生成查看链接</button>
           <button class="button secondary stats-ai-button" type="button" onclick="toggleAiPanel()">AI 识别导入</button>
         </div>
 
@@ -1070,7 +1072,7 @@
           </label>
 
           <button class="stats-upload" type="button" onclick="document.getElementById('aiImageInput').click()">
-            <strong>上传聊天截图</strong>
+            <strong>上传截图</strong>
             <span>可拖入、粘贴或选择多张图片</span>
           </button>
           <input type="file" id="aiImageInput" class="ai-hide" accept="image/*" multiple onchange="addAiImageFiles(this.files)">
@@ -1210,7 +1212,7 @@
 
   <script src="assets/vendor/jszip.min.js"></script>
   <script src="app.js?v=kaki-studio-2"></script>
-  <script src="stats.js?v=kaki-studio-2"></script>
-  <script src="studio.js?v=kaki-studio-5"></script>
+  <script src="stats.js?v=kaki-studio-3"></script>
+  <script src="studio.js?v=kaki-studio-6"></script>
 </body>
 </html>
