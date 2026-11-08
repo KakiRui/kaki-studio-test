@@ -544,7 +544,7 @@
         renderCustomers();
         document.getElementById('aiTargetBatch').innerText = batches[currentIdx].id;
         const msg = document.getElementById('statusMsg');
-        msg.style.display = selectedNums.length > 0 ? 'block' : 'none';
+        msg.style.display = selectedNums.length > 0 ? 'flex' : 'none';
         msg.innerHTML = `<span class="selection-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5 10 16l8-9"/></svg></span><span>已选中 ${selectedNums.join(', ')} 号，点击顾客完成绑定</span>`;
         const occupied = new Set(batches[currentIdx].customers.flatMap(customer => customer.nums.flat())).size;
         const customersWithNumbers = batches[currentIdx].customers.filter(customer => customer.nums.flat().length > 0).length;

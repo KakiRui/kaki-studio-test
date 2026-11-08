@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 10px;
   background: transparent;
   color: var(--ink-faint);
   text-align: left;
@@ -37,8 +37,8 @@
 }
 
 .studio-switch > svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex: none;
   color: var(--accent);
 }
@@ -48,15 +48,16 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  line-height: 1.15;
 }
 
 .studio-switch strong {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
 }
 
 .studio-switch small {
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--ink-faint);
 }
 
@@ -163,8 +164,8 @@
   }
 
   .studio-switch > svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   .studio-switch small {
