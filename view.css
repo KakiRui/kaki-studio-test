@@ -170,6 +170,32 @@
   gap: 8px;
 }
 
+.public-number-panel .public-number-grid {
+  max-height: min(420px, 48vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 8px 2px 2px;
+  border-radius: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) var(--surface-2);
+  scrollbar-gutter: stable;
+}
+
+.public-number-panel .public-number-grid::-webkit-scrollbar {
+  width: 7px;
+}
+
+.public-number-panel .public-number-grid::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: var(--surface-2);
+}
+
+.public-number-panel .public-number-grid::-webkit-scrollbar-thumb {
+  border: 2px solid var(--surface-2);
+  border-radius: 20px;
+  background: var(--line-strong);
+}
+
 .public-num-card {
   min-height: 58px;
   padding: 8px;
