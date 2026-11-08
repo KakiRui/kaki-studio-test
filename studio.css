@@ -1,0 +1,172 @@
+.studio-switcher {
+  width: min(1240px, calc(100% - 48px));
+  margin: 18px auto 0;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--paper-deep);
+}
+
+.studio-switch {
+  min-width: 0;
+  min-height: 54px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: transparent;
+  color: var(--ink-faint);
+  text-align: left;
+  transition: background .2s, color .2s, box-shadow .2s;
+}
+
+.studio-switch:hover {
+  color: var(--ink);
+}
+
+.studio-switch.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 2px 8px var(--mode-shadow);
+}
+
+.studio-switch > svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--accent);
+}
+
+.studio-switch > span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.studio-switch strong {
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.studio-switch small {
+  font-size: 8px;
+  color: var(--ink-faint);
+}
+
+.studio-view[hidden] {
+  display: none !important;
+}
+
+.count-workspace {
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 18px 0 36px;
+}
+
+#countFrame {
+  width: 100%;
+  min-height: 900px;
+  border: 0;
+  display: block;
+  background: transparent;
+}
+
+.count-link-card {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+}
+
+.count-link-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.count-link-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.count-link-head span {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  color: var(--accent);
+}
+
+.count-link-head strong {
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.count-link-card > label:not(.check-line) {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.count-link-card select {
+  margin-bottom: 9px;
+}
+
+.count-link-card .check-line {
+  margin-bottom: 8px;
+  font-size: 9px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.count-link-card p {
+  margin: 0;
+  font-size: 8.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 760px) {
+  .studio-switcher,
+  .count-workspace {
+    width: min(100% - 24px, 1240px);
+  }
+
+  .studio-switcher {
+    margin-top: 12px;
+  }
+
+  .studio-switch {
+    min-height: 50px;
+    padding: 7px 8px;
+  }
+
+  .studio-switch > svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .studio-switch small {
+    display: none;
+  }
+
+  .count-workspace {
+    padding-top: 8px;
+  }
+
+  #countFrame {
+    min-height: 760px;
+  }
+}

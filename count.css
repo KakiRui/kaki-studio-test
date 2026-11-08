@@ -1,0 +1,266 @@
+/* KAKI Studio number center: keep the counting workflow while using the image app's visual system. */
+body.studio-count-page {
+  --m-bg: transparent;
+  --m-text: var(--ink);
+  --m-border: var(--line);
+  --m-blue-main: var(--accent);
+  --m-green-main: var(--accent);
+  --m-yellow-act: var(--accent-halo);
+  --m-green-rec: var(--surface-2);
+  --m-danger: var(--danger);
+  --m-card: var(--surface);
+  --m-panel: var(--surface-2);
+  --m-input: var(--surface);
+  --m-chip: var(--paper-deep);
+  --m-muted: var(--ink-soft);
+  --m-soft: var(--ink-faint);
+  --m-btn: var(--surface);
+  --m-sort: var(--surface-2);
+  --m-sort-border: var(--line);
+  --m-sort-text: var(--ink-soft);
+  --m-tip: var(--surface);
+  --m-sold: var(--paper-deep);
+  --m-sold-border: var(--line);
+  --m-sold-text: var(--ink-faint);
+  --m-footer: var(--ink-faint);
+  --m-status: var(--surface-2);
+  --m-badge: var(--paper-deep);
+  --m-warn-bg: var(--danger-soft);
+  --m-warn-text: var(--danger);
+  --m-warn-border: var(--line);
+  --m-divider: var(--line);
+  --m-tag-hover: var(--accent);
+  --m-upload-bg: var(--surface);
+  --m-mini: var(--surface-2);
+  --m-modal: var(--surface);
+  --m-shadow: var(--panel-shadow);
+  --m-on-accent: var(--primary-ink);
+  --m-remove-bg: rgba(20, 19, 16, .72);
+  box-sizing: border-box;
+  min-height: 0;
+  margin: 0;
+  padding: 0 2px 18px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+body.studio-count-page input,
+body.studio-count-page select,
+body.studio-count-page textarea {
+  border-color: var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+body.studio-count-page button {
+  font-family: var(--sans);
+}
+
+body.studio-count-page .theme-btn,
+body.studio-count-page .theme-modal-bg {
+  display: none !important;
+}
+
+body.studio-count-page .toolbar,
+body.studio-count-page .pool-box,
+body.studio-count-page #customerList,
+body.studio-count-page .action-modal,
+body.studio-count-page .public-hero,
+body.studio-count-page .public-grid-wrap,
+body.studio-count-page .public-customer-section {
+  border-color: var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel-surface);
+  box-shadow: 0 10px 35px var(--panel-shadow);
+}
+
+body.studio-count-page .toolbar {
+  margin: 18px 0 16px;
+  padding: 20px;
+}
+
+body.studio-count-page .pool-box {
+  margin: 0 0 16px;
+  padding: 20px;
+}
+
+body.studio-count-page #customerList {
+  margin: 16px 0;
+  padding: 20px;
+}
+
+body.studio-count-page .customer-card {
+  border-color: var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+body.studio-count-page .customer-card.can-receive {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+body.studio-count-page .num-card {
+  height: 48px;
+  border-color: var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+
+body.studio-count-page .num-card.selected {
+  border-color: var(--selection-border);
+  background: var(--selection-ring);
+  color: var(--primary-ink);
+}
+
+body.studio-count-page .num-card.sold {
+  border-color: var(--line);
+  background: var(--paper-deep);
+  color: var(--ink-faint);
+  opacity: .72;
+}
+
+body.studio-count-page .btn-action,
+body.studio-count-page .button-group .btn-share {
+  border-color: var(--primary-border) !important;
+  background: var(--primary-surface) !important;
+  color: var(--primary-ink) !important;
+}
+
+body.studio-count-page .btn-clear,
+body.studio-count-page .button-group button,
+body.studio-count-page .mini-btn,
+body.studio-count-page .copy-btn,
+body.studio-count-page .sort-btn {
+  border-color: var(--line) !important;
+  background: var(--surface) !important;
+  color: var(--ink-soft) !important;
+}
+
+body.studio-count-page .sort-btn,
+body.studio-count-page .copy-btn {
+  border-radius: 6px;
+}
+
+body.studio-count-page .customer-card.can-receive {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+body.studio-count-page .tag {
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--primary-ink);
+}
+
+body.studio-count-page .tab {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+
+body.studio-count-page .tab.active {
+  border-color: var(--primary-border);
+  background: var(--primary-surface);
+  color: var(--primary-ink);
+}
+
+body.studio-count-page .add-tab-btn {
+  border-color: var(--line-dashed);
+  background: var(--surface);
+  color: var(--accent);
+}
+
+body.studio-count-page .ai-panel {
+  border-color: var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+body.studio-count-page .api-config,
+body.studio-count-page details.prompt-box,
+body.studio-count-page .ai-switch,
+body.studio-count-page .ai-trace-box,
+body.studio-count-page .ai-record-box,
+body.studio-count-page .ai-preview-card {
+  border-color: var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+body.studio-count-page .ai-upload {
+  border-color: var(--line-dashed);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--accent);
+}
+
+body.studio-count-page .ai-status {
+  border-radius: 9px;
+  background: var(--surface-2);
+  color: var(--ink-soft);
+}
+
+body.studio-count-page .global-owner-tip {
+  border-color: var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+body.studio-count-page .action-modal {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+
+body.studio-count-page .modal-choice,
+body.studio-count-page .modal-cancel {
+  border-color: var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+body.studio-count-page .modal-choice.danger {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+body.studio-count-page .public-shell {
+  padding: 18px 0 26px;
+}
+
+body.studio-count-page .public-kicker {
+  color: var(--accent);
+}
+
+body.studio-count-page .public-num-card.occupied,
+body.studio-count-page .public-customer-num {
+  border-color: var(--accent);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  body.studio-count-page {
+    padding-bottom: 12px;
+  }
+
+  body.studio-count-page .toolbar,
+  body.studio-count-page .pool-box,
+  body.studio-count-page #customerList {
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  body.studio-count-page .input-row {
+    grid-template-columns: auto 58px minmax(0, 1fr);
+  }
+
+  body.studio-count-page .input-row .btn-action {
+    grid-column: 1 / -1;
+  }
+}

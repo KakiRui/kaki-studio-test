@@ -5,14 +5,15 @@
   const MAX_FULLSCREEN_LAYERS = 8;
   const MAX_COMPOSITE_LAYERS = 8;
   const MAX_FILE_BYTES = 60 * 1024 * 1024;
-  const STORAGE_KEY = 'kaki-mark-studio-settings-v7';
-  const IMAGE_DB_NAME = 'kaki-mark-studio-images-v1';
+  const STUDIO_STORAGE_SCOPE = location.pathname.includes('kaki-studio-test') ? 'test' : 'prod';
+  const STORAGE_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-settings-v1`;
+  const IMAGE_DB_NAME = `kaki-studio-${STUDIO_STORAGE_SCOPE}-images-v1`;
   const IMAGE_DB_VERSION = 1;
   const IMAGE_STORE_NAME = 'files';
-  const WATERMARK_DB_NAME = 'kaki-mark-studio-watermarks-v1';
+  const WATERMARK_DB_NAME = `kaki-studio-${STUDIO_STORAGE_SCOPE}-watermarks-v1`;
   const WATERMARK_STORE_NAME = 'watermarks';
-  const ONBOARDING_KEY = 'kaki-mark-studio-onboarding-v1';
-  const THEME_KEY = 'kaki-mark-studio-theme-v5';
+  const ONBOARDING_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-onboarding-v1`;
+  const THEME_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-theme-v1`;
   const PREVIEW_EDGE = 1500;
   const KAKI_PSD_TEMPLATE_SRC = 'assets/presets/kaki-heart-template.png?v=3';
   const THEMES = Object.freeze({
@@ -856,8 +857,8 @@
     const title = state.mode === 'watermark' ? '单图水印预览' : '目录拼图预览';
     el.stageTitle.textContent = title;
     document.title = state.mode === 'watermark'
-      ? 'Kaki Mark Studio · 批量图片水印'
-      : 'Kaki Mark Studio · 目录拼图';
+      ? 'KAKI Studio · 批量图片水印'
+      : 'KAKI Studio · 目录拼图';
   }
 
   function updateExportUi() {
@@ -1634,6 +1635,7 @@
     el.queueStrip.innerHTML = '';
     if (!hasFiles) {
       el.libraryMeta.textContent = '尚未导入图片';
+      window.dispatchEvent(new CustomEvent('kaki-studio:images-changed'));
       return;
     }
     el.libraryMeta.textContent = `${state.files.length} 张 · 合计 ${formatBytes(state.files.reduce((sum, f) => sum + f.file.size, 0))}`;
@@ -1685,6 +1687,7 @@
       if (index === activeImageIndex) item.classList.add('active');
       el.queueStrip.appendChild(item);
     });
+    window.dispatchEvent(new CustomEvent('kaki-studio:images-changed'));
   }
 
   function selectImage(index) {
@@ -3061,6 +3064,44 @@
     } catch (_) { /* ignore storage restrictions */ }
     if (!onboardingSeen) window.setTimeout(showWelcome, 120);
   }
+
+  window.KAKIStudioImageBridge = Object.freeze({
+    applyLinkedSoldNumbers(numbers) {
+      const clean = [...new Set((numbers || []).map(Number).filter((number) =>
+        Number.isInteger(number) && number >= 0
+      ))].sort((a, b) => a - b);
+      state.collage.soldEnabled = true;
+      state.collage.soldNumbers = clean.join(', ');
+      state.collage.remainingMode = false;
+      if (el.soldEnabled) el.soldEnabled.checked = true;
+      if (el.soldNumbers) el.soldNumbers.value = state.collage.soldNumbers;
+      if (el.remainingMode) el.remainingMode.checked = false;
+      updateCollageUi();
+      persistSettings();
+      renderQueue();
+      schedulePreview();
+      return clean.length;
+    },
+    restoreManualSoldState(enabled, text, remainingMode) {
+      state.collage.soldEnabled = Boolean(enabled);
+      state.collage.soldNumbers = String(text || '');
+      state.collage.remainingMode = Boolean(remainingMode);
+      if (el.soldEnabled) el.soldEnabled.checked = state.collage.soldEnabled;
+      if (el.soldNumbers) el.soldNumbers.value = state.collage.soldNumbers;
+      if (el.remainingMode) el.remainingMode.checked = state.collage.remainingMode;
+      updateCollageUi();
+      persistSettings();
+      renderQueue();
+      schedulePreview();
+    },
+    getImageNumberSummary() {
+      return state.files.map((record, index) => ({
+        index,
+        number: state.collage.numberStart + index,
+        name: record.name
+      }));
+    }
+  });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

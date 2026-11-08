@@ -1,4 +1,4 @@
-# Kaki Mark Studio
+# KAKI Studio
 
 A local-first batch image marking workspace for artists, photographers and small shops. Add a signature, sequence numbers, occlusion masks and contact-sheet layouts, preview every result live, then export individual images or a ZIP archive.
 

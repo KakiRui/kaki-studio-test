@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3f1e9">
-  <meta name="description" content="Kaki Mark Studio：在浏览器本地批量添加图片水印、编号并导出。图片不会上传。">
-  <title>Kaki Mark Studio · 批量图片水印</title>
+  <meta name="description" content="KAKI Studio：本地图片水印、目录拼图与发售号码管理。">
+  <title>KAKI Studio · 图片与发售管理</title>
   <link rel="stylesheet" href="styles.css?v=kaki-marks-1-13">
+  <link rel="stylesheet" href="studio.css?v=kaki-studio-1">
 </head>
 <body data-app-version="1.13">
   <header class="topbar">
-    <div class="brand" role="img" aria-label="Kaki Mark Studio">
+    <div class="brand" role="img" aria-label="KAKI Studio">
       <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
       <span class="brand-copy">
-        <strong>Kaki Mark Studio</strong>
-        <small>image marking workspace</small>
+        <strong>KAKI Studio</strong>
+        <small>image &amp; release workspace</small>
       </span>
     </div>
     <div class="top-actions">
@@ -80,7 +81,18 @@
     </div>
   </header>
 
-  <main class="page-shell">
+  <nav class="studio-switcher" aria-label="KAKI Studio 工作区">
+    <button class="studio-switch active" id="imageWorkspaceBtn" type="button" aria-selected="true" data-studio-view="images">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m7 16 4-4 3 3 2-2 3 3"/></svg>
+      <span><strong>图片工作台</strong><small>水印与目录拼图</small></span>
+    </button>
+    <button class="studio-switch" id="countWorkspaceBtn" type="button" aria-selected="false" data-studio-view="counts">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h3"/></svg>
+      <span><strong>号码中心</strong><small>档位、归属与分享</small></span>
+    </button>
+  </nav>
+
+  <main class="page-shell studio-view" id="imageApp">
     <section class="library panel" aria-labelledby="libraryTitle">
       <div class="section-heading">
         <div>
@@ -814,6 +826,25 @@
             <label class="check-line"><input id="remainingMode" type="checkbox" data-collage="remainingMode"> 输入的是未售编号，其余全部遮挡</label>
           </div>
 
+          <div class="count-link-card" id="countLinkCard">
+            <div class="count-link-head">
+              <div>
+                <span>NUMBER LINK</span>
+                <strong>关联号码档</strong>
+              </div>
+              <button class="text-button" id="openCountWorkspaceBtn" type="button">打开号码中心</button>
+            </div>
+            <label for="linkedCountBatch">当前档位</label>
+            <select id="linkedCountBatch">
+              <option value="">独立编辑遮挡，不读取号码中心</option>
+            </select>
+            <label class="check-line">
+              <input id="linkedCountEnabled" type="checkbox">
+              自动读取该档位的已占号码并遮挡
+            </label>
+            <p id="linkedCountStatus">未关联。现有手动遮挡功能保持不变。</p>
+          </div>
+
           <p class="tip-box"><span>提示</span> 空白格会保留为画布底色，确保每一页尺寸一致，方便直接发布。</p>
         </div>
 
@@ -922,10 +953,14 @@
     </section>
 
     <footer class="site-footer">
-      <span>Kaki Mark Studio <b>v1.13</b></span>
+      <span>KAKI Studio <b>v1.13</b></span>
       <p>浏览器本地处理 · 不上传图片 · 不追踪数据</p>
       <span>Built for makers.</span>
     </footer>
+  </main>
+
+  <main class="studio-view count-workspace" id="countApp" hidden>
+    <iframe id="countFrame" title="号码中心" src="count.html?embedded=1"></iframe>
   </main>
 
   <section class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
@@ -963,5 +998,6 @@
 
   <script src="assets/vendor/jszip.min.js"></script>
   <script src="app.js?v=kaki-marks-1-13"></script>
+  <script src="studio.js?v=kaki-studio-3"></script>
 </body>
 </html>
