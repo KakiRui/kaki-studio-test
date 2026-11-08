@@ -409,10 +409,10 @@
 }
 
 .stats-content .tag-separator {
-  color: color-mix(in srgb, var(--accent) 52%, var(--ink-faint));
+  color: var(--ink-soft);
   font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 650;
 }
 
 .stats-content .cust-count-badge {
