@@ -196,12 +196,12 @@
   background-size:7px 7px,100% 100%;
 }
 :root[data-theme="qingxi"] .stats-metric{
-  border-color:rgba(115,157,181,.13);
-  background:#f1f9fc;
+  border-color:rgba(115,157,181,.1);
+  background:#f6fbfd;
 }
 :root[data-theme="qingxi"] .stats-metric:nth-child(even){
-  border-color:rgba(195,137,156,.13);
-  background:#fff2f6;
+  border-color:rgba(195,137,156,.1);
+  background:#fff8fa;
 }
 :root[data-theme="qingxi"] .stats-metric span{
   color:#708b9c;
@@ -210,12 +210,12 @@
   color:#35576b;
 }
 :root[data-theme="qingxi"] .tag{
-  border:1px solid #efbac8;
-  background:#f9d9e2;
-  color:#70505d;
+  border:1px solid #f3d7df;
+  background:#fcecf1;
+  color:#765b66;
 }
 :root[data-theme="qingxi"] .tag:hover{
-  background:#f6ccd8;
+  background:#f9e2e9;
 }
 :root[data-theme="qingxi"] .customer-card.can-receive{
   border-color:color-mix(in srgb,var(--accent-alt) 82%,var(--line));
@@ -352,7 +352,7 @@ svg{display:block;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap
   background:rgba(255,255,255,.72);
 }
 :root[data-theme="qingxi"] .brand-mark i:nth-child(1){background:#8dbdd2}
-:root[data-theme="qingxi"] .brand-mark i:nth-child(2){background:#f2bacb}
+:root[data-theme="qingxi"] .brand-mark i:nth-child(2){background:#f5c9d6}
 :root[data-theme="qingxi"] .brand-mark i:nth-child(3){background:#496273}
 :root[data-theme="dianmo"] .theme-switch-preview i:nth-child(2){background:var(--accent)}
 :root[data-theme="dianmo"] .theme-switch-preview i:nth-child(3){background:var(--accent-rose)}

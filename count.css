@@ -65,17 +65,7 @@
 }
 
 .stats-batch-list-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 9px;
-}
-
-.stats-batch-list-row > span {
-  font-family: var(--mono);
-  font-size: 8px;
-  letter-spacing: 1.2px;
-  color: var(--accent);
+  display: block;
 }
 
 .stats-batch-list {
@@ -977,10 +967,6 @@
 
   .stats-metric strong {
     font-size: 19px;
-  }
-
-  .stats-batch-list-row > span {
-    font-size: 7.5px;
   }
 
   .stats-workspace {
