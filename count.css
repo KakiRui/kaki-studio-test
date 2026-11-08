@@ -30,11 +30,7 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--accent) 6%, var(--surface)),
-    color-mix(in srgb, var(--accent-alt) 9%, var(--surface))
-  );
+  background: var(--surface);
 }
 
 .stats-metric span {
@@ -54,16 +50,19 @@
 }
 
 .stats-batch-bar {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
   margin-top: 15px;
   padding-top: 14px;
   border-top: 1px solid var(--line);
 }
 
-.stats-batch-bar > span {
+.stats-batch-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stats-batch-heading > span {
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: 1.2px;
@@ -75,6 +74,7 @@
   gap: 7px;
   min-width: 0;
   overflow-x: auto;
+  margin-top: 8px;
   padding: 2px;
   scrollbar-width: thin;
 }
@@ -970,16 +970,8 @@
     font-size: 19px;
   }
 
-  .stats-batch-bar {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-batch-bar > span {
-    display: none;
-  }
-
-  .stats-batch-bar > .button {
-    width: 100%;
+  .stats-batch-heading > span {
+    font-size: 7.5px;
   }
 
   .stats-workspace {

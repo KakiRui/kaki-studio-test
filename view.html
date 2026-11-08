@@ -21,7 +21,7 @@
     <section class="public-hero panel">
       <p class="overline">RELEASE LOOKUP</p>
       <h1 id="publicBatchTitle">档位</h1>
-      <p>查看当前档位的号码归属和顾客清单。此页面不会修改商家数据。</p>
+      <p>查看当前档位的号码归属和顾客清单。此页面不会修改数据。</p>
       <div class="public-stats">
         <div><span>号码范围</span><strong id="publicTotalCount">0</strong></div>
         <div><span>已占号码</span><strong id="publicSoldCount">0</strong></div>
@@ -30,7 +30,10 @@
     </section>
 
     <div class="public-tools">
-      <input id="publicSearch" type="search" placeholder="输入号码或顾客名快速查找" oninput="filterPublicResults()">
+      <label class="public-search-field" for="publicSearch">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg>
+        <input id="publicSearch" type="search" placeholder="输入号码或顾客名快速查找" oninput="filterPublicResults()">
+      </label>
       <button type="button" onclick="clearPublicSearch()">清除</button>
     </div>
 
@@ -79,7 +82,13 @@
           ))].sort((a, b) => a - b);
           return name && nums.length ? { name, nums } : null;
         }).filter(Boolean);
-        return { id: String(data.n || '未命名档位').trim().slice(0, 80), total, customers };
+        const themes = new Set(['original', 'frost-indigo', 'pine-smoke', 'haitang', 'lotus-pink', 'qingxi', 'dianmo']);
+        return {
+          id: String(data.n || '未命名档位').trim().slice(0, 80),
+          total,
+          customers,
+          theme: themes.has(data.th) ? data.th : 'original'
+        };
       } catch (_) {
         return null;
       }
@@ -94,6 +103,7 @@
     }
 
     function renderView(data) {
+      document.documentElement.dataset.theme = data.theme || 'original';
       const ownerByNumber = new Map();
       data.customers.forEach(customer => customer.nums.forEach(number => ownerByNumber.set(number, customer.name)));
       document.getElementById('publicBatchTitle').textContent = data.id;

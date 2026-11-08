@@ -2,6 +2,7 @@
     const COUNT_DATA_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-counts-v1`;
     const COUNT_AI_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-count-ai-v1`;
     const STUDIO_THEME_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-theme-v1`;
+    const PUBLIC_THEME_IDS = new Set(['original', 'frost-indigo', 'pine-smoke', 'haitang', 'lotus-pink', 'qingxi', 'dianmo']);
     let batches = JSON.parse(localStorage.getItem(COUNT_DATA_KEY)) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
     let selectedNums = [];
@@ -271,7 +272,8 @@
             ))].sort((a, b) => a - b);
             return nums.length ? [customer.name, nums] : null;
         }).filter(Boolean);
-        const payload = { v: 1, n: batch.id, t: batch.total, c: customers };
+        const theme = document.documentElement.dataset.theme || 'original';
+        const payload = { v: 1, n: batch.id, t: batch.total, c: customers, th: theme };
         return bytesToBase64Url(new TextEncoder().encode(JSON.stringify(payload)));
     }
 
@@ -288,7 +290,8 @@
                 ))].sort((a, b) => a - b);
                 return name && nums.length ? { name, nums } : null;
             }).filter(Boolean);
-            return { id: String(data.n || '未命名档位').trim().slice(0, 80), total, customers };
+            const theme = PUBLIC_THEME_IDS.has(data.th) ? data.th : 'original';
+            return { id: String(data.n || '未命名档位').trim().slice(0, 80), total, customers, theme };
         } catch(error) {
             return null;
         }
