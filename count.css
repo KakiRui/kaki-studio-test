@@ -289,6 +289,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+  min-height: 32px;
 }
 
 .stats-content .cust-title {
@@ -333,16 +334,12 @@
 }
 
 .customer-mark {
-  width: 20px;
-  height: 20px;
-  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
+  width: 21px;
+  height: 21px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
   border-radius: 50%;
-  background: color-mix(in srgb, var(--accent) 11%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
   color: var(--accent);
-  font-family: var(--serif);
-  font-size: 9px;
-  font-weight: 700;
-  line-height: 1;
 }
 
 .stats-content .cust-name-btn:hover,
@@ -390,16 +387,19 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
   margin-top: 10px;
 }
 
 .stats-content .tag {
-  padding: 4px 9px;
-  border-radius: 6px;
+  min-width: 32px;
+  padding: 5px 10px;
+  border-radius: 7px;
   background: var(--accent);
   color: var(--primary-ink);
-  font-size: 10px;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
   cursor: pointer;
 }
 

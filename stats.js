@@ -587,10 +587,9 @@
             const tags = c.nums.map((batch, bIdx) => 
                 batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
             ).join('<span class="tag-separator">|</span>');
-            const customerInitial = Array.from(c.name.trim())[0] || '客';
             const nameEditor = editingCustomerIndex === cIdx
                 ? `<input type="text" id="customerNameEditor" class="cust-name-input" maxlength="60" value="${escapeAiHtml(c.name)}" placeholder="输入用户名" onclick="event.stopPropagation()" onkeydown="handleCustomerNameKey(event, ${cIdx})" onblur="finishCustomerNameEdit(${cIdx}, true)">`
-                : `<button type="button" class="cust-name-btn" onclick="handleCustomerNameTap(event, ${cIdx})" title="双击修改用户名"><span class="customer-mark" aria-hidden="true">${escapeAiHtml(customerInitial)}</span><span class="cust-name-text">${escapeAiHtml(c.name)}</span></button>`;
+                : `<button type="button" class="cust-name-btn" onclick="handleCustomerNameTap(event, ${cIdx})" title="双击修改用户名"><span class="customer-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4.2c.6 4 2.4 5.8 6.4 6.4-4 .6-5.8 2.4-6.4 6.4-.6-4-2.4-5.8-6.4-6.4 4-.6 5.8-2.4 6.4-6.4Z"/><circle cx="18.2" cy="17.8" r="1.3"/></svg></span><span class="cust-name-text">${escapeAiHtml(c.name)}</span></button>`;
 
             card.innerHTML = `
                 <div class="cust-header">

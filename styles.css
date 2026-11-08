@@ -162,21 +162,21 @@
   --selection-border:#4e3d48;--selection-ring:#d4b3dc;--selection-halo:rgba(74,47,74,.3);
 }
 :root[data-theme="qingxi"]{
-  --paper:#f7fbff;--paper-deep:#eaf4fb;--surface:#ffffff;--surface-2:#fbf3f7;
+  --paper:#f7fbff;--paper-deep:#eaf4fb;--surface:#ffffff;--surface-2:#f3f9fd;
   --ink:#3f5668;--ink-soft:#6a7f90;--ink-faint:#95a8b7;--line:rgba(74,112,138,.12);
   --line-strong:rgba(74,112,138,.22);--lime:#e4f0f5;--lime-deep:#79aec7;--lime-ink:#294b5e;
   --clay:#8dbdd2;--danger:#ae6879;--shadow:0 24px 60px rgba(76,117,145,.08);
   --accent:#8dbdd2;--accent-alt:#dfb4c2;--accent-ring:rgba(141,189,210,.15);--accent-halo:rgba(227,185,201,.25);
   --primary-surface:#496273;--primary-border:#496273;--primary-hover:#5a7486;--primary-ink:#ffffff;
   --toast-surface:#496273;--toast-ink:#ffffff;
-  --panel-surface:rgba(255,251,253,.91);--pill-surface:rgba(255,251,253,.7);
+  --panel-surface:rgba(255,255,255,.9);--pill-surface:rgba(255,255,255,.68);
   --panel-line:rgba(74,112,138,.1);--line-dashed:rgba(74,112,138,.22);
   --hover-soft:rgba(74,112,138,.05);--surface-hover:#f7fbfe;--surface-drag:#eaf5fb;
   --surface-active:#e0edf5;--surface-disabled:#eff5f8;--danger-soft:#f6e6ea;
-  --collection-surface:rgba(251,242,246,.82);--preview-surface:#eaf4f9;
+  --collection-surface:rgba(239,247,252,.8);--preview-surface:#eaf4f9;
   --preview-grid:rgba(74,112,138,.028);--checker-base:#e5f0f6;--checker:#d1e3ed;
   --control-track:#d9e7ef;--switch-track:#d3e3ed;--placeholder:#97aab7;
-  --module-open-start:#fcfbfe;--module-open-end:#eef7fc;--tip-surface:#fbf3f7;
+  --module-open-start:#fbfdff;--module-open-end:#eef7fc;--tip-surface:#f4fafd;
   --empty-sheet:#ffffff;--empty-sheet-back:#d9e9f2;--empty-sheet-front-start:#b9d2df;
   --empty-sheet-front-end:#f0eaf0;--result-image:#ebf4f9;--preview-frame:#eaf3f8;
   --overlay-bg:rgba(45,66,82,.46);--overlay-strong-bg:rgba(32,49,61,.74);
@@ -192,7 +192,7 @@
   --selection-border:#587488;--selection-ring:#b9deed;--selection-halo:rgba(198,111,139,.22);
 }
 :root[data-theme="qingxi"] body{
-  background-image:radial-gradient(var(--body-dot) .65px,transparent .65px),linear-gradient(145deg,#eff9ff 0%,#ffffff 42%,#fff0f5 100%);
+  background-image:radial-gradient(var(--body-dot) .65px,transparent .65px),linear-gradient(145deg,#f8fcff 0%,#ffffff 48%,#fff7fa 100%);
   background-size:7px 7px,100% 100%;
 }
 :root[data-theme="qingxi"] .stats-metric{
@@ -215,7 +215,7 @@
   --ink:#f0f0ec;--ink-soft:#b7bac0;--ink-faint:#81868d;--line:rgba(255,255,255,.13);
   --line-strong:rgba(255,255,255,.25);--lime:#d0b05d;--lime-deep:#86b69b;--lime-ink:#17181a;
   --clay:#72a7b5;--danger:#e07c86;--shadow:0 24px 70px rgba(0,0,0,.4);
-  --accent:#72a7b5;--accent-alt:#d8b95e;--accent-rose:#e38da0;--accent-gold:#d8b95e;--accent-sage:#8bc5a3;
+  --accent:#72a7b5;--accent-alt:#b88c9a;--accent-rose:#e38da0;--accent-gold:#d8b95e;--accent-sage:#8bc5a3;
   --accent-ring:rgba(114,167,181,.18);--accent-halo:rgba(255,255,255,.16);
   --primary-surface:#f0f0ec;--primary-border:#f0f0ec;--primary-hover:#d9d9d4;--primary-ink:#121315;
   --toast-surface:#f0f0ec;--toast-ink:#121315;
