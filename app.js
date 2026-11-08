@@ -22,8 +22,7 @@
     'pine-smoke': { label: '松烟青', metaColor: '#edefe9' },
     haitang: { label: '海棠', metaColor: '#f5f0ea' },
     'lotus-pink': { label: '藕荷', metaColor: '#f6f2f4' },
-    'sakura-mist': { label: '樱雾', metaColor: '#fbf1f3' },
-    'cloud-blue': { label: '云水蓝', metaColor: '#eff6fb' },
+    'sakura-blue': { label: '樱蓝', metaColor: '#fbf2f5' },
     dianmo: { label: '点墨', metaColor: '#111214' }
   });
 
