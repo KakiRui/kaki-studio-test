@@ -30,7 +30,11 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: var(--surface-2);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 6%, var(--surface)),
+    color-mix(in srgb, var(--accent-alt) 9%, var(--surface))
+  );
 }
 
 .stats-metric span {
@@ -289,7 +293,19 @@
 
 .stats-content .cust-title {
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
   overflow-wrap: anywhere;
+}
+
+.stats-content .cust-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  flex: none;
 }
 
 .stats-content .cust-name-btn,
@@ -308,12 +324,25 @@
   cursor: text;
 }
 
+.stats-content .cust-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.25;
+}
+
 .customer-mark {
   width: 20px;
   height: 20px;
   border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
   border-radius: 50%;
   background: color-mix(in srgb, var(--accent) 11%, var(--surface));
+  color: var(--accent);
+  font-family: var(--serif);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .stats-content .cust-name-btn:hover,
@@ -342,7 +371,6 @@
 
 .stats-content .sort-btn,
 .stats-content .copy-btn {
-  margin-left: 5px;
   white-space: nowrap;
 }
 
@@ -381,12 +409,14 @@
 }
 
 .stats-content .tag-separator {
-  color: var(--ink-faint);
-  font-size: 10px;
+  color: color-mix(in srgb, var(--accent) 52%, var(--ink-faint));
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .stats-content .cust-count-badge {
-  margin-left: 5px;
+  flex: none;
   padding: 2px 6px;
   border-radius: 10px;
   background: color-mix(in srgb, var(--accent) 13%, var(--surface));

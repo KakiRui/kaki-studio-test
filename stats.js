@@ -586,20 +586,23 @@
             if(selectedNums.length > 0) card.onclick = () => bindToCustomer(cIdx);
             const tags = c.nums.map((batch, bIdx) => 
                 batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
-            ).join('<span class="tag-separator">·</span>');
+            ).join('<span class="tag-separator">|</span>');
+            const customerInitial = Array.from(c.name.trim())[0] || '客';
             const nameEditor = editingCustomerIndex === cIdx
                 ? `<input type="text" id="customerNameEditor" class="cust-name-input" maxlength="60" value="${escapeAiHtml(c.name)}" placeholder="输入用户名" onclick="event.stopPropagation()" onkeydown="handleCustomerNameKey(event, ${cIdx})" onblur="finishCustomerNameEdit(${cIdx}, true)">`
-                : `<button type="button" class="cust-name-btn" onclick="handleCustomerNameTap(event, ${cIdx})" title="双击修改用户名"><span class="customer-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19c.6-4 2.8-6 6.5-6s5.9 2 6.5 6"/></svg></span>${escapeAiHtml(c.name)}</button>`;
+                : `<button type="button" class="cust-name-btn" onclick="handleCustomerNameTap(event, ${cIdx})" title="双击修改用户名"><span class="customer-mark" aria-hidden="true">${escapeAiHtml(customerInitial)}</span><span class="cust-name-text">${escapeAiHtml(c.name)}</span></button>`;
 
             card.innerHTML = `
                 <div class="cust-header">
                     <div class="cust-title">
                         ${nameEditor}
                         <span class="cust-count-badge">${c.nums.flat().length} 张</span>
+                    </div>
+                    <div class="cust-actions">
                         <button class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</button>
                         <button class="sort-btn" onclick="event.stopPropagation(); sortCustomerNums(${cIdx})">排序</button>
+                        <button class="cust-delete" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</button>
                     </div>
-                    <button class="cust-delete" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</button>
                 </div>
                 <div class="tag-box">${tags || '<small class="tag-empty">点击绑定号码...</small>'}</div>
             `;

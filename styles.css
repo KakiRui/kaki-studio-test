@@ -162,7 +162,7 @@
   --selection-border:#4e3d48;--selection-ring:#d4b3dc;--selection-halo:rgba(74,47,74,.3);
 }
 :root[data-theme="qingxi"]{
-  --paper:#f7fbff;--paper-deep:#eaf4fb;--surface:#ffffff;--surface-2:#f3f9fd;
+  --paper:#f7fbff;--paper-deep:#eaf4fb;--surface:#ffffff;--surface-2:#fbf5f8;
   --ink:#3f5668;--ink-soft:#6a7f90;--ink-faint:#95a8b7;--line:rgba(74,112,138,.12);
   --line-strong:rgba(74,112,138,.22);--lime:#e4f0f5;--lime-deep:#79aec7;--lime-ink:#294b5e;
   --clay:#8dbdd2;--danger:#ae6879;--shadow:0 24px 60px rgba(76,117,145,.08);
@@ -194,6 +194,17 @@
 :root[data-theme="qingxi"] body{
   background-image:radial-gradient(var(--body-dot) .65px,transparent .65px),linear-gradient(145deg,#f8fcff 0%,#ffffff 48%,#fff7fa 100%);
   background-size:7px 7px,100% 100%;
+}
+:root[data-theme="qingxi"] .stats-metric{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--surface)),color-mix(in srgb,var(--accent-alt) 13%,var(--surface)));
+}
+:root[data-theme="qingxi"] .tag{
+  background:color-mix(in srgb,var(--accent-alt) 76%,var(--accent));
+  color:#fff;
+}
+:root[data-theme="qingxi"] .num-card.selected{
+  border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent-alt) 23%,var(--surface));
 }
 :root[data-theme="dianmo"]{
   --paper:#111214;--paper-deep:#0b0c0d;--surface:#191b1e;--surface-2:#22252a;
