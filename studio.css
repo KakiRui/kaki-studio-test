@@ -64,18 +64,19 @@
   display: none !important;
 }
 
-.count-workspace {
-  width: min(1240px, calc(100% - 48px));
-  margin: 0 auto;
-  padding: 18px 0 36px;
+.studio-view:not([hidden]) {
+  animation: studio-view-in .2s ease-out both;
 }
 
-#countFrame {
-  width: 100%;
-  min-height: 900px;
-  border: 0;
-  display: block;
-  background: transparent;
+@keyframes studio-view-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .count-link-card {
@@ -139,8 +140,7 @@
 }
 
 @media (max-width: 760px) {
-  .studio-switcher,
-  .count-workspace {
+  .studio-switcher {
     width: min(100% - 24px, 1240px);
   }
 
@@ -162,11 +162,4 @@
     display: none;
   }
 
-  .count-workspace {
-    padding-top: 8px;
-  }
-
-  #countFrame {
-    min-height: 760px;
-  }
 }

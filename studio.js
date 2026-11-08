@@ -7,7 +7,6 @@
   const countButton = document.getElementById('countWorkspaceBtn');
   const imageApp = document.getElementById('imageApp');
   const countApp = document.getElementById('countApp');
-  const countFrame = document.getElementById('countFrame');
   const openCountButton = document.getElementById('openCountWorkspaceBtn');
   const batchSelect = document.getElementById('linkedCountBatch');
   const linkToggle = document.getElementById('linkedCountEnabled');
@@ -29,7 +28,8 @@
     try {
       localStorage.setItem(LINK_STORAGE_KEY, JSON.stringify({
         batchId: batchSelect.value,
-        enabled: linkToggle.checked
+        enabled: linkToggle.checked,
+        manual: manualSoldSnapshot
       }));
     } catch (_) {}
   }
@@ -42,9 +42,6 @@
     countButton.classList.toggle('active', !isImages);
     imageButton.setAttribute('aria-selected', String(isImages));
     countButton.setAttribute('aria-selected', String(!isImages));
-    if(!isImages) {
-      countFrame.contentWindow?.postMessage({ type: 'kaki-studio:request-count-state' }, location.origin);
-    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -61,7 +58,7 @@
   function updateLinkedStatus() {
     const batch = selectedBatch();
     if(!batch) {
-      linkStatus.textContent = '未关联。现有手动遮挡功能保持不变。';
+      linkStatus.textContent = '未关联。原有手动遮挡功能保持不变。';
       return;
     }
     const occupied = allNumbers(batch);
@@ -106,16 +103,15 @@
     persistLinkSettings();
   }
 
-  function renderCountBatches(batches, currentIdx) {
-    countBatches = Array.isArray(batches) ? batches : [];
-    currentCountIndex = Number.isInteger(currentIdx) ? currentIdx : 0;
+  function renderCountBatches(snapshot) {
+    countBatches = Array.isArray(snapshot?.batches) ? snapshot.batches : [];
+    currentCountIndex = Number.isInteger(snapshot?.currentIdx) ? snapshot.currentIdx : 0;
     const saved = savedLinkSettings();
     const fallback = countBatches[currentCountIndex]?.id || countBatches[0]?.id || '';
     const selectedId = countBatches.some((batch) => batch.id === saved.batchId) ? saved.batchId : fallback;
-    batchSelect.innerHTML = '<option value="">独立编辑遮挡，不读取号码中心</option>' + countBatches.map((batch) =>
-      `<option value="${String(batch.id).replace(/"/g, '&quot;')}">${String(batch.id).replace(/[&<>]/g, (char) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;'
-      }[char]))} · ${batch.customers.length} 位顾客</option>`
+    if(saved.manual && !manualSoldSnapshot) manualSoldSnapshot = saved.manual;
+    batchSelect.innerHTML = '<option value="">独立编辑遮挡，不读取统计中心</option>' + countBatches.map((batch) =>
+      `<option value="${escapeHtml(batch.id)}">${escapeHtml(batch.id)} · ${batch.customers.length} 位顾客</option>`
     ).join('');
     batchSelect.value = selectedId;
     if(saved.enabled && selectedId) linkToggle.checked = true;
@@ -123,14 +119,19 @@
     else updateLinkedStatus();
   }
 
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
+  }
+
   imageButton.addEventListener('click', () => switchWorkspace('images'));
   countButton.addEventListener('click', () => switchWorkspace('counts'));
   openCountButton.addEventListener('click', () => switchWorkspace('counts'));
 
   batchSelect.addEventListener('change', () => {
-    if(linkToggle.checked) {
-      applyLinkedBatch();
-    } else {
+    if(linkToggle.checked) applyLinkedBatch();
+    else {
       updateLinkedStatus();
       persistLinkSettings();
     }
@@ -141,35 +142,15 @@
     else restoreManualSold();
   });
 
-  countFrame.addEventListener('load', () => {
-    countFrame.contentWindow?.postMessage({ type: 'kaki-studio:request-count-state' }, location.origin);
-    const theme = document.documentElement.dataset.theme || 'original';
-    countFrame.contentWindow?.postMessage({ type: 'kaki-studio:theme-changed', theme }, location.origin);
+  window.addEventListener('kaki-studio:count-state', (event) => {
+    renderCountBatches(event.detail);
   });
+  window.addEventListener('kaki-studio:images-changed', updateLinkedStatus);
 
-  window.addEventListener('message', (event) => {
-    if(event.origin !== location.origin || !event.data) return;
-    if(event.data.type === 'kaki-studio:count-state') {
-      renderCountBatches(event.data.batches, event.data.currentIdx);
-    } else if(event.data.type === 'kaki-studio:count-height') {
-      const height = Math.max(760, Math.min(20000, Number(event.data.height) || 900));
-      countFrame.style.height = `${height}px`;
-    }
-  });
-
-  window.addEventListener('kaki-studio:images-changed', () => {
-    updateLinkedStatus();
-  });
-
-  function syncFrameTheme() {
-    countFrame.contentWindow?.postMessage({
-      type: 'kaki-studio:theme-changed',
-      theme: document.documentElement.dataset.theme || 'original'
-    }, location.origin);
+  const snapshot = window.KAKIStudioCountBridge?.getSnapshot?.();
+  if(snapshot) {
+    const saved = savedLinkSettings();
+    if(saved.enabled) linkToggle.checked = true;
+    renderCountBatches(snapshot);
   }
-
-  document.addEventListener('click', () => requestAnimationFrame(syncFrameTheme));
-
-  const saved = savedLinkSettings();
-  if(saved.enabled) linkToggle.checked = true;
 })();

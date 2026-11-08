@@ -8,6 +8,7 @@
   <title>KAKI Studio · 图片与发售管理</title>
   <link rel="stylesheet" href="styles.css?v=kaki-marks-1-13">
   <link rel="stylesheet" href="studio.css?v=kaki-studio-1">
+  <link rel="stylesheet" href="count.css?v=kaki-studio-2">
 </head>
 <body data-app-version="1.13">
   <header class="topbar">
@@ -88,7 +89,7 @@
     </button>
     <button class="studio-switch" id="countWorkspaceBtn" type="button" aria-selected="false" data-studio-view="counts">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h3"/></svg>
-      <span><strong>号码中心</strong><small>档位、归属与分享</small></span>
+      <span><strong>统计中心</strong><small>档位、归属与分享</small></span>
     </button>
   </nav>
 
@@ -832,11 +833,11 @@
                 <span>NUMBER LINK</span>
                 <strong>关联号码档</strong>
               </div>
-              <button class="text-button" id="openCountWorkspaceBtn" type="button">打开号码中心</button>
+              <button class="text-button" id="openCountWorkspaceBtn" type="button">打开统计中心</button>
             </div>
             <label for="linkedCountBatch">当前档位</label>
             <select id="linkedCountBatch">
-              <option value="">独立编辑遮挡，不读取号码中心</option>
+              <option value="">独立编辑遮挡，不读取统计中心</option>
             </select>
             <label class="check-line">
               <input id="linkedCountEnabled" type="checkbox">
@@ -952,16 +953,227 @@
       </section>
     </section>
 
-    <footer class="site-footer">
-      <span>KAKI Studio <b>v1.13</b></span>
-      <p>浏览器本地处理 · 不上传图片 · 不追踪数据</p>
-      <span>Built for makers.</span>
-    </footer>
   </main>
 
-  <main class="studio-view count-workspace" id="countApp" hidden>
-    <iframe id="countFrame" title="号码中心" src="count.html?embedded=1"></iframe>
+  <main class="page-shell studio-view stats-shell" id="countApp" hidden>
+    <section class="stats-overview panel">
+      <div class="stats-hero-copy">
+        <p class="overline">RELEASE LEDGER</p>
+        <h2>统计中心</h2>
+        <p>按日期管理档位、号码归属与顾客清单，已占号码可以直接联动到目录拼图。</p>
+      </div>
+      <div class="stats-metric-grid">
+        <div class="stats-metric"><span>号码总量</span><strong id="countTotalStat">0</strong></div>
+        <div class="stats-metric"><span>已占号码</span><strong id="countSoldStat">0</strong></div>
+        <div class="stats-metric"><span>剩余号码</span><strong id="countRemainingStat">0</strong></div>
+        <div class="stats-metric"><span>有号顾客</span><strong id="countCustomerStat">0</strong></div>
+      </div>
+      <div class="stats-batch-bar">
+        <span>DATES</span>
+        <div id="batchTabsList" class="stats-batch-list"></div>
+        <button class="button secondary compact" type="button" onclick="addNewBatch()">＋ 新建日期档</button>
+      </div>
+    </section>
+
+    <section class="workspace stats-workspace">
+      <aside class="control-panel panel stats-control-panel">
+        <div class="panel-title-row">
+          <div>
+            <p class="overline">CONFIGURATION</p>
+            <h2>号码设置</h2>
+          </div>
+          <span class="live-dot"><i></i> 实时统计</span>
+        </div>
+
+        <div class="stats-field-stack">
+          <div class="field-block">
+            <label for="totalNum">号码范围：1 到</label>
+            <input type="number" id="totalNum" value="50" min="1" max="1000" onchange="updateBatchTotal()">
+          </div>
+          <div class="field-block">
+            <label for="custInput">添加顾客</label>
+            <div class="stats-inline-field">
+              <input type="text" id="custInput" placeholder="输入顾客名字">
+              <button class="button primary compact" type="button" onclick="addCustomer()">添加</button>
+            </div>
+          </div>
+          <div class="field-block">
+            <label for="searchBar">查找顾客或号码</label>
+            <div class="stats-inline-field">
+              <input type="text" id="searchBar" placeholder="输入名字或号码..." oninput="renderCustomers()">
+              <button class="button secondary compact" type="button" onclick="clearFilter()">清除</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-action-grid">
+          <button class="button secondary compact" type="button" onclick="openResetBatchModal()">重置本档</button>
+          <button class="button secondary compact danger-text" type="button" onclick="initSystem()">清空全部</button>
+          <button class="button primary stats-share-button" type="button" onclick="openShareModal()">生成顾客链接</button>
+          <button class="button secondary stats-ai-button" type="button" onclick="toggleAiPanel()">AI 识别导入</button>
+        </div>
+
+        <div id="statusMsg" class="stats-selection-note" style="display:none;"></div>
+
+        <div id="aiPanel" class="stats-ai-panel" style="display:none;">
+          <div class="stats-ai-heading">
+            <div><span>IMAGE IMPORT</span><strong>从聊天截图识别号码</strong></div>
+            <button class="text-button" type="button" onclick="toggleAiPanel()">收起</button>
+          </div>
+
+          <button class="button secondary compact ai-wide-button" type="button" onclick="toggleApiConfig()">API 接口与预设</button>
+          <div id="apiConfigPanel" class="stats-subpanel">
+            <div class="stats-two-up">
+              <div>
+                <label class="stats-label" for="aiPresetSelect">已保存预设</label>
+                <select id="aiPresetSelect" onchange="applySelectedPreset()"></select>
+              </div>
+              <div>
+                <label class="stats-label" for="aiPresetName">预设名称</label>
+                <input type="text" id="aiPresetName" placeholder="例如：我的识图接口">
+              </div>
+            </div>
+            <div class="stats-three-actions">
+              <button class="button secondary compact" type="button" onclick="saveCurrentPreset()">保存</button>
+              <button class="button secondary compact" type="button" onclick="deleteSelectedPreset()">删除</button>
+              <button class="button secondary compact" type="button" onclick="renderAiConfig()">刷新</button>
+            </div>
+            <label class="stats-label" for="aiEndpoint">接口地址</label>
+            <input type="text" id="aiEndpoint" placeholder="https://api.openai.com/v1" oninput="saveAiCfg()">
+            <label class="stats-label" for="aiKey">API Key（只保存在本机）</label>
+            <input type="password" id="aiKey" placeholder="sk-..." oninput="saveAiCfg()">
+            <label class="stats-label" for="aiModel">识图模型</label>
+            <input type="text" id="aiModel" placeholder="例如：gpt-4o-mini" oninput="saveAiCfg()">
+            <div id="aiModelPicker" class="model-picker"></div>
+            <div class="stats-two-actions">
+              <button class="button secondary compact" type="button" onclick="fetchAiModels()">拉取模型</button>
+              <button class="button secondary compact" type="button" onclick="renderAiConfig()">刷新配置</button>
+            </div>
+          </div>
+
+          <details class="stats-details">
+            <summary>识别提示词 <span>高级设置</span></summary>
+            <textarea id="aiPrompt" rows="7"></textarea>
+            <div class="stats-two-actions">
+              <button class="button secondary compact" type="button" onclick="savePrompt()">保存提示词</button>
+              <button class="button secondary compact" type="button" onclick="restoreDefaultPrompt()">还原默认</button>
+            </div>
+          </details>
+
+          <label class="stats-check">
+            <input type="checkbox" id="aiStripRemarks" checked onchange="updateStripRemarks(this.checked)">
+            自动去掉昵称括号备注
+          </label>
+          <label class="stats-check">
+            <input type="checkbox" id="aiBatchRequest" onchange="updateAiBatchRequest(this.checked)">
+            多图合并识别（准确率可能下降）
+          </label>
+
+          <button class="stats-upload" type="button" onclick="document.getElementById('aiImageInput').click()">
+            <strong>上传聊天截图</strong>
+            <span>可拖入、粘贴或选择多张图片</span>
+          </button>
+          <input type="file" id="aiImageInput" class="ai-hide" accept="image/*" multiple onchange="addAiImageFiles(this.files)">
+          <div id="aiImageList" class="ai-image-list"></div>
+          <div id="aiImageToolbar" class="stats-two-actions" hidden>
+            <button type="button" class="button secondary compact" onclick="clearAiImages()">清空图片</button>
+          </div>
+          <p class="stats-help">导入位置：<b id="aiTargetBatch">当前档位</b>。识别结果会先预览，不会直接写入。</p>
+          <div class="stats-two-actions">
+            <button class="button primary compact" type="button" onclick="runAiImport()">开始识别</button>
+            <button class="button secondary compact" type="button" onclick="clearAiPreview()">清空结果</button>
+          </div>
+          <div id="aiStatus" class="ai-status"></div>
+          <div id="aiTrace" class="ai-trace"></div>
+          <div id="aiPreview" class="ai-preview"></div>
+        </div>
+      </aside>
+
+      <section class="stats-content">
+        <section class="pool-box panel stats-number-panel" aria-labelledby="numberPanelTitle">
+          <div class="stage-heading">
+            <div>
+              <p class="overline">NUMBER BOARD</p>
+              <h2 id="numberPanelTitle">档位号码表</h2>
+            </div>
+            <button class="button secondary compact" type="button" onclick="copyRemaining()">复制剩余号码</button>
+          </div>
+          <p class="stats-help">点击空号选中，再点击右侧或下方的顾客完成绑定。已占号码点击可查看归属。</p>
+          <div class="scroll-area stats-number-scroll">
+            <div id="numberGrid" class="grid"></div>
+          </div>
+        </section>
+
+        <section class="panel stats-customer-panel" aria-labelledby="customerPanelTitle">
+          <div class="stage-heading">
+            <div>
+              <p class="overline">CUSTOMER LEDGER</p>
+              <h2 id="customerPanelTitle">顾客清单</h2>
+            </div>
+            <button class="button secondary compact" type="button" onclick="sortAllCustomerNums()">统一排序</button>
+          </div>
+          <p class="stats-help">双击顾客名字可修改；已关联目录拼图时，这里的号码会同步为已售遮挡。</p>
+          <div id="customerList"></div>
+        </section>
+      </section>
+    </section>
+
   </main>
+
+  <footer class="site-footer">
+    <span>KAKI Studio <b>v1.13</b></span>
+    <p>浏览器本地处理 · 不上传图片 · 不追踪数据</p>
+    <span>Built for makers.</span>
+  </footer>
+
+  <div id="resetBatchModal" class="action-modal-bg" onclick="closeResetBatchModal(event)">
+    <div class="action-modal" onclick="event.stopPropagation()">
+      <h4>重置本档</h4>
+      <p>请选择要清空的内容。档位名称和号码范围会保留。</p>
+      <button type="button" class="modal-choice" onclick="resetCurrentBatch(false)">
+        仅重置本档数字
+        <small>清空所有号码归属，保留顾客清单。</small>
+      </button>
+      <button type="button" class="modal-choice danger" onclick="resetCurrentBatch(true)">
+        重置本档数字 + 顾客清单
+        <small>同时清空号码归属和本档全部顾客。</small>
+      </button>
+      <button type="button" class="modal-cancel" onclick="closeResetBatchModal()">取消</button>
+    </div>
+  </div>
+
+  <div id="shareModal" class="action-modal-bg" onclick="closeShareModal(event)">
+    <div class="action-modal" onclick="event.stopPropagation()">
+      <h4>顾客查看链接</h4>
+      <p>只读快照包含号码归属和所有已有号码的顾客，不包含图片或其他档位。</p>
+      <div class="share-link-row">
+        <input id="shareLinkInput" type="text" readonly aria-label="顾客查看链接" onclick="this.select()">
+        <button type="button" onclick="copyShareLink()">复制</button>
+      </div>
+      <div class="share-modal-actions">
+        <button type="button" class="primary" onclick="shareCustomerLink()">分享给顾客</button>
+        <button type="button" onclick="previewShareLink()">打开预览</button>
+      </div>
+      <div class="share-note">链接是生成时的快照，数据修改后需要重新生成。</div>
+      <button type="button" class="modal-cancel" style="margin-top:9px;" onclick="closeShareModal()">关闭</button>
+    </div>
+  </div>
+
+  <div id="aiImageViewer" class="ai-image-viewer" onclick="closeAiImageViewer(event)">
+    <div class="ai-image-viewer-panel" onclick="event.stopPropagation()">
+      <div class="ai-image-viewer-head">
+        <span id="aiImageViewerTitle" class="ai-image-viewer-title">图片预览</span>
+        <button type="button" class="ai-image-viewer-close" onclick="closeAiImageViewer()" aria-label="关闭预览">✕</button>
+      </div>
+      <img id="aiImageViewerImg" class="ai-image-viewer-img" alt="聊天记录截图预览">
+      <div id="aiImageViewerMeta" class="ai-image-viewer-meta"></div>
+      <div class="ai-image-viewer-actions">
+        <button type="button" id="aiImageViewerPrev" onclick="moveAiImageViewer(-1)">‹ 上一张</button>
+        <span id="aiImageViewerCounter">0 / 0</span>
+        <button type="button" id="aiImageViewerNext" onclick="moveAiImageViewer(1)">下一张 ›</button>
+      </div>
+    </div>
+  </div>
 
   <section class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
     <div class="welcome-card">
@@ -998,6 +1210,7 @@
 
   <script src="assets/vendor/jszip.min.js"></script>
   <script src="app.js?v=kaki-marks-1-13"></script>
-  <script src="studio.js?v=kaki-studio-3"></script>
+  <script src="stats.js?v=kaki-studio-1"></script>
+  <script src="studio.js?v=kaki-studio-4"></script>
 </body>
 </html>

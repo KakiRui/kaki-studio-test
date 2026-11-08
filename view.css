@@ -1,0 +1,226 @@
+.public-view {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.public-header {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 21px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.public-readonly {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--pill-surface);
+  color: var(--ink-faint);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: .7px;
+}
+
+.public-shell {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 22px 0 34px;
+}
+
+.public-hero {
+  padding: 22px;
+}
+
+.public-hero h1 {
+  margin: 5px 0 0;
+  font-family: var(--serif);
+  font-size: clamp(28px, 7vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.public-hero > p:not(.overline) {
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+
+.public-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 17px;
+}
+
+.public-stats > div {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface-2);
+}
+
+.public-stats span {
+  display: block;
+  color: var(--ink-faint);
+  font-family: var(--mono);
+  font-size: 8px;
+}
+
+.public-stats strong {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--serif);
+  font-size: 24px;
+}
+
+.public-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+
+.public-tools button {
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.public-panel {
+  margin-top: 10px;
+  padding: 20px;
+}
+
+.public-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.public-section-heading h2 {
+  margin: 4px 0 0;
+  font-family: var(--serif);
+  font-size: 20px;
+}
+
+.public-section-heading > span {
+  color: var(--ink-faint);
+  font-size: 9px;
+}
+
+.public-number-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+  gap: 8px;
+}
+
+.public-num-card {
+  min-height: 58px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-2);
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+.public-num-card.occupied {
+  border-color: var(--selection-border);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--selection-ring), 0 0 0 2px var(--selection-halo);
+}
+
+.public-num-card strong {
+  font-size: 18px;
+}
+
+.public-num-card span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 9px;
+}
+
+.public-customer-list {
+  display: grid;
+  gap: 8px;
+}
+
+.public-customer-card {
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.public-customer-card > strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 11px;
+}
+
+.public-customer-card > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.public-customer-card > div span {
+  min-width: 26px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  font-size: 10px;
+  text-align: center;
+}
+
+.public-empty {
+  grid-column: 1 / -1;
+  padding: 24px 10px;
+  color: var(--ink-faint);
+  font-size: 10px;
+  text-align: center;
+}
+
+.public-footer {
+  margin: 18px 0 0;
+  color: var(--ink-faint);
+  font-size: 8.5px;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .public-header,
+  .public-shell {
+    width: min(100% - 24px, 920px);
+  }
+
+  .public-shell {
+    padding-top: 14px;
+  }
+
+  .public-hero,
+  .public-panel {
+    padding: 16px;
+  }
+
+  .public-number-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

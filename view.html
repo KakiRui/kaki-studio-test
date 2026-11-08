@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="original">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f1e9">
+  <title>KAKI Studio · 号码归属查询</title>
+  <link rel="stylesheet" href="styles.css?v=kaki-marks-1-13">
+  <link rel="stylesheet" href="view.css?v=kaki-studio-1">
+</head>
+<body class="public-view">
+  <header class="public-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-copy"><strong>KAKI Studio</strong><small>release lookup</small></span>
+    </div>
+    <span class="public-readonly">只读查看</span>
+  </header>
+
+  <main class="public-shell">
+    <section class="public-hero panel">
+      <p class="overline">RELEASE LOOKUP</p>
+      <h1 id="publicBatchTitle">档位</h1>
+      <p>查看当前档位的号码归属和顾客清单。此页面不会修改商家数据。</p>
+      <div class="public-stats">
+        <div><span>号码范围</span><strong id="publicTotalCount">0</strong></div>
+        <div><span>已占号码</span><strong id="publicSoldCount">0</strong></div>
+        <div><span>剩余号码</span><strong id="publicRemainingCount">0</strong></div>
+      </div>
+    </section>
+
+    <div class="public-tools">
+      <input id="publicSearch" type="search" placeholder="输入号码或顾客名快速查找" oninput="filterPublicResults()">
+      <button type="button" onclick="clearPublicSearch()">清除</button>
+    </div>
+
+    <section class="public-panel panel">
+      <div class="public-section-heading">
+        <div><p class="overline">NUMBER BOARD</p><h2>号码归属</h2></div>
+        <span>实时快照</span>
+      </div>
+      <div id="publicNumberGrid" class="public-number-grid"></div>
+    </section>
+
+    <section class="public-panel panel">
+      <div class="public-section-heading">
+        <div><p class="overline">CUSTOMER LEDGER</p><h2>顾客清单</h2></div>
+        <span id="publicCustomerCount">0 位顾客</span>
+      </div>
+      <div id="publicCustomerList" class="public-customer-list"></div>
+    </section>
+
+    <p class="public-footer">只读分享页 · 数据更新后请以重新发送的链接为准</p>
+  </main>
+
+  <script>
+    function escapeHtml(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[char]));
+    }
+
+    function base64UrlToBytes(value) {
+      const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - value.length % 4) % 4);
+      const binary = atob(padded);
+      return Uint8Array.from(binary, char => char.charCodeAt(0));
+    }
+
+    function decodePayload(value) {
+      try {
+        const data = JSON.parse(new TextDecoder().decode(base64UrlToBytes(value)));
+        const total = Number(data.t);
+        if(data.v !== 1 || !Number.isInteger(total) || total < 1 || total > 1000 || !Array.isArray(data.c)) return null;
+        const customers = data.c.map(item => {
+          if(!Array.isArray(item) || item.length !== 2) return null;
+          const name = String(item[0] || '').trim().slice(0, 60);
+          const nums = [...new Set((Array.isArray(item[1]) ? item[1] : []).map(Number).filter(number =>
+            Number.isInteger(number) && number >= 1 && number <= total
+          ))].sort((a, b) => a - b);
+          return name && nums.length ? { name, nums } : null;
+        }).filter(Boolean);
+        return { id: String(data.n || '未命名档位').trim().slice(0, 80), total, customers };
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function renderError() {
+      document.getElementById('publicBatchTitle').textContent = '链接无法读取';
+      document.querySelector('.public-hero > p:not(.overline)').textContent = '分享链接可能不完整，请让商家重新发送。';
+      document.getElementById('publicNumberGrid').innerHTML = '<div class="public-empty">没有可显示的号码数据。</div>';
+      document.getElementById('publicCustomerList').innerHTML = '<div class="public-empty">没有可显示的顾客数据。</div>';
+      document.getElementById('publicSearch').disabled = true;
+    }
+
+    function renderView(data) {
+      const ownerByNumber = new Map();
+      data.customers.forEach(customer => customer.nums.forEach(number => ownerByNumber.set(number, customer.name)));
+      document.getElementById('publicBatchTitle').textContent = data.id;
+      document.getElementById('publicTotalCount').textContent = data.total;
+      document.getElementById('publicSoldCount').textContent = ownerByNumber.size;
+      document.getElementById('publicRemainingCount').textContent = Math.max(0, data.total - ownerByNumber.size);
+
+      const grid = document.getElementById('publicNumberGrid');
+      const cards = [];
+      for(let number = 1; number <= data.total; number++) {
+        const owner = ownerByNumber.get(number);
+        cards.push(`
+          <div class="public-num-card ${owner ? 'occupied' : ''}" data-number="${number}" data-search="${escapeHtml(`${number} ${owner || ''}`.toLowerCase())}">
+            <strong>${number}</strong>
+            <span>${owner ? escapeHtml(owner) : '未占用'}</span>
+          </div>
+        `);
+      }
+      grid.innerHTML = cards.join('');
+
+      const customers = data.customers.slice().sort((a, b) => Math.min(...a.nums) - Math.min(...b.nums));
+      document.getElementById('publicCustomerCount').textContent = `${customers.length} 位顾客 · 仅显示已有号码`;
+      document.getElementById('publicCustomerList').innerHTML = customers.map(customer => `
+        <article class="public-customer-card" data-search="${escapeHtml(`${customer.name} ${customer.nums.join(' ')}`.toLowerCase())}">
+          <strong>${escapeHtml(customer.name)}</strong>
+          <div>${customer.nums.map(number => `<span>${number}</span>`).join('')}</div>
+        </article>
+      `).join('') || '<div class="public-empty">当前没有顾客号码记录。</div>';
+    }
+
+    function filterPublicResults() {
+      const query = document.getElementById('publicSearch').value.trim().toLowerCase();
+      document.querySelectorAll('[data-search]').forEach(node => {
+        node.hidden = Boolean(query) && !node.dataset.search.includes(query);
+      });
+    }
+
+    function clearPublicSearch() {
+      document.getElementById('publicSearch').value = '';
+      filterPublicResults();
+      document.getElementById('publicSearch').focus();
+    }
+
+    const encoded = location.hash.startsWith('#customers=') ? location.hash.slice('#customers='.length) : '';
+    const data = encoded ? decodePayload(encoded) : null;
+    if(data) renderView(data);
+    else renderError();
+  </script>
+</body>
+</html>
