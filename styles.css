@@ -195,13 +195,16 @@
   background-image:radial-gradient(var(--body-dot) .65px,transparent .65px),linear-gradient(145deg,#f8fcff 0%,#ffffff 48%,#fff7fa 100%);
   background-size:7px 7px,100% 100%;
 }
+:root[data-theme="qingxi"] .stats-metric{
+  background:var(--surface);
+}
 :root[data-theme="qingxi"] .tag{
   background:color-mix(in srgb,var(--accent-alt) 76%,var(--accent));
   color:#fff;
 }
 :root[data-theme="qingxi"] .customer-card.can-receive{
-  border-color:color-mix(in srgb,var(--accent-alt) 72%,var(--line));
-  background:color-mix(in srgb,var(--accent-alt) 17%,var(--surface));
+  border-color:color-mix(in srgb,var(--accent-alt) 82%,var(--line));
+  background:color-mix(in srgb,var(--accent-alt) 23%,var(--surface));
   box-shadow:inset 3px 0 0 var(--accent-alt);
 }
 :root[data-theme="qingxi"] .num-card.selected{

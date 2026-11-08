@@ -30,7 +30,11 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: var(--surface);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 6%, var(--surface)),
+    color-mix(in srgb, var(--accent-alt) 9%, var(--surface))
+  );
 }
 
 .stats-metric span {
@@ -55,14 +59,19 @@
   border-top: 1px solid var(--line);
 }
 
-.stats-batch-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.stats-new-batch-button {
+  width: 100%;
+  margin-bottom: 8px;
 }
 
-.stats-batch-heading > span {
+.stats-batch-list-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.stats-batch-list-row > span {
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: 1.2px;
@@ -970,7 +979,7 @@
     font-size: 19px;
   }
 
-  .stats-batch-heading > span {
+  .stats-batch-list-row > span {
     font-size: 7.5px;
   }
 

@@ -970,11 +970,11 @@
         <div class="stats-metric"><span>有号顾客</span><strong id="countCustomerStat">0</strong></div>
       </div>
       <div class="stats-batch-bar">
-        <div class="stats-batch-heading">
+        <button class="button secondary stats-new-batch-button" type="button" onclick="addNewBatch()">＋ 新建日期档</button>
+        <div class="stats-batch-list-row">
           <span>DATES</span>
-          <button class="button secondary compact" type="button" onclick="addNewBatch()">＋ 新建日期档</button>
+          <div id="batchTabsList" class="stats-batch-list"></div>
         </div>
-        <div id="batchTabsList" class="stats-batch-list"></div>
       </div>
     </section>
 
