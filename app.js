@@ -22,7 +22,7 @@
     'pine-smoke': { label: '松烟青', metaColor: '#edefe9' },
     haitang: { label: '海棠', metaColor: '#f5f0ea' },
     'lotus-pink': { label: '藕荷', metaColor: '#f6f2f4' },
-    'sakura-blue': { label: '樱蓝', metaColor: '#fbf2f5' },
+    qingxi: { label: '晴汐', metaColor: '#f7fbff' },
     dianmo: { label: '点墨', metaColor: '#111214' }
   });
 
@@ -1035,6 +1035,7 @@
   }
 
   function resetSettings() {
+    if (!window.confirm('确定恢复默认设置吗？\n\n水印、目录拼图和导出参数会恢复默认，但已导入的图片和已保存的水印素材不会删除。')) return;
     state.watermark = { ...WATERMARK_DEFAULTS };
     state.fullscreenPreset = { ...FULLSCREEN_PRESET_DEFAULTS };
     state.collage = { ...COLLAGE_DEFAULTS };
