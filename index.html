@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f3f1e9">
   <meta name="description" content="KAKI Studio：本地图片水印、目录拼图与发售号码管理。">
   <title>KAKI Studio · 图片与发售管理</title>
-  <link rel="stylesheet" href="styles.css?v=kaki-studio-themes-10">
+  <link rel="stylesheet" href="styles.css?v=kaki-studio-themes-11">
   <link rel="stylesheet" href="studio.css?v=kaki-studio-6">
   <link rel="stylesheet" href="count.css?v=kaki-studio-10">
 </head>
@@ -1179,20 +1179,42 @@
     </div>
   </div>
 
-  <section class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
-    <div class="welcome-card">
+  <section class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle0" hidden>
+    <div class="welcome-card" id="welcomeCard">
       <div class="welcome-grid-mark" aria-hidden="true"></div>
-      <p class="welcome-kicker">A SMALL GUIDE BEFORE YOU START</p>
-      <h2 id="welcomeTitle">先把水印，<br><em>做成作品的一部分。</em></h2>
-      <p class="welcome-lead">三步完成整套作品，所有图片只在当前浏览器里处理。</p>
-      <ol class="welcome-steps">
-        <li><span>01</span><div><strong>导入作品</strong><small>一次拖入多张 JPG、PNG 或 WEBP。</small></div></li>
-        <li><span>02</span><div><strong>组合水印</strong><small>选择预设，再叠加底纹、水印框或小水印。</small></div></li>
-        <li><span>03</span><div><strong>批量带走</strong><small>实时预览，最后下载 JPEG 或 PNG。</small></div></li>
-      </ol>
+      <div class="welcome-pages" id="welcomePages" aria-live="polite">
+        <article class="welcome-page" data-welcome-page="0" aria-labelledby="welcomeTitle0">
+          <p class="welcome-kicker"><span>IMAGE WORKSPACE</span><span>01 / 02</span></p>
+          <h2 id="welcomeTitle0">先把水印，<br><em>做成作品的一部分。</em></h2>
+          <p class="welcome-lead">从这里完成整套作品，所有图片只在当前浏览器里处理。</p>
+          <ol class="welcome-steps">
+            <li><span>01</span><div><strong>导入作品</strong><small>一次拖入多张 JPG、PNG 或 WEBP。</small></div></li>
+            <li><span>02</span><div><strong>组合水印</strong><small>选择预设，再叠加底纹、水印框或小水印。</small></div></li>
+            <li><span>03</span><div><strong>批量带走</strong><small>实时预览，最后下载 JPEG 或 PNG。</small></div></li>
+          </ol>
+        </article>
+
+        <article class="welcome-page" data-welcome-page="1" aria-labelledby="welcomeTitle1" hidden>
+          <p class="welcome-kicker"><span>RELEASE LEDGER</span><span>02 / 02</span></p>
+          <h2 id="welcomeTitle1">把每一次发售，<br><em>整理成清楚的档案。</em></h2>
+          <p class="welcome-lead">按日期分档管理顾客、号码与查看链接，后续查找和分享都会更直接。</p>
+          <ol class="welcome-steps">
+            <li><span>01</span><div><strong>新建日期档</strong><small>例如「11.8」，每个档位独立统计，不会混在一起。</small></div></li>
+            <li><span>02</span><div><strong>绑定号码归属</strong><small>点击空号再点顾客；点击已占号码即可查看属于谁。</small></div></li>
+            <li><span>03</span><div><strong>分享与图片联动</strong><small>生成只读查看链接，目录拼图也能自动读取已占号码。</small></div></li>
+          </ol>
+        </article>
+      </div>
+      <div class="welcome-pagination" id="welcomeDots" role="group" aria-label="欢迎页目录">
+        <button class="welcome-dot active" type="button" data-welcome-target="0" aria-label="第 1 页：图片工作台" aria-current="page"><span>01</span><small>图片工作台</small></button>
+        <button class="welcome-dot" type="button" data-welcome-target="1" aria-label="第 2 页：统计中心"><span>02</span><small>统计中心</small></button>
+      </div>
       <div class="welcome-footer">
         <span>本机处理 · 不上传图片</span>
-        <button class="button primary" id="welcomeStartBtn" type="button">开始制作</button>
+        <div class="welcome-nav-actions">
+          <button class="button secondary compact" id="welcomePrevBtn" type="button" disabled>上一页</button>
+          <button class="button primary" id="welcomeStartBtn" type="button">下一页 · 统计中心</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1213,7 +1235,7 @@
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
   <script src="assets/vendor/jszip.min.js"></script>
-  <script src="app.js?v=kaki-studio-6"></script>
+  <script src="app.js?v=kaki-studio-7"></script>
   <script src="stats.js?v=kaki-studio-6"></script>
   <script src="studio.js?v=kaki-studio-6"></script>
 </body>

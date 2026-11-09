@@ -12,7 +12,7 @@
   const IMAGE_STORE_NAME = 'files';
   const WATERMARK_DB_NAME = `kaki-studio-${STUDIO_STORAGE_SCOPE}-watermarks-v1`;
   const WATERMARK_STORE_NAME = 'watermarks';
-  const ONBOARDING_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-onboarding-v1`;
+  const ONBOARDING_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-onboarding-v2`;
   const THEME_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-theme-v1`;
   const PREVIEW_EDGE = 1500;
   const KAKI_PSD_TEMPLATE_SRC = 'assets/presets/kaki-heart-template.png?v=3';
@@ -232,6 +232,7 @@
   const el = {};
   let previewTimer = 0;
   let resizeTimer = 0;
+  let welcomePageIndex = 0;
   let currentTheme = 'original';
   let kakiTemplateImage = null;
   let kakiTemplatePromise = null;
@@ -605,7 +606,7 @@
       'smallInput','smallChooseBtn','smallEmpty','smallEmptyTitle','smallEmptyHint',
       'smallList','smallEditor','smallActiveLabel','smallSaveBtn',
       'smallTintCombo','smallShadowControls',
-      'smallStatus','showWelcomeBtn','welcomeOverlay','welcomeStartBtn',
+      'smallStatus','showWelcomeBtn','welcomeOverlay','welcomeCard','welcomePrevBtn','welcomeStartBtn',
       'imagePreviewOverlay','imagePreviewImg','imagePreviewTitle','imagePreviewMeta','imagePreviewCloseBtn',
       'themePicker','themeToggleBtn','themeToggleLabel','themeMenu'
     ];
@@ -621,6 +622,8 @@
     el.collageMarkPlacements = Array.from(document.querySelectorAll('.collage-mark-placement'));
     el.exportControls = Array.from(document.querySelectorAll('[data-export]'));
     el.themeOptions = Array.from(document.querySelectorAll('[data-theme-option]'));
+    el.welcomePages = Array.from(document.querySelectorAll('[data-welcome-page]'));
+    el.welcomeDots = Array.from(document.querySelectorAll('[data-welcome-target]'));
   }
 
   function toast(message, type = '') {
@@ -2794,7 +2797,26 @@
     }
   }
 
+  function setWelcomePage(index) {
+    const lastIndex = Math.max(0, el.welcomePages.length - 1);
+    welcomePageIndex = Math.min(lastIndex, Math.max(0, index));
+    el.welcomePages.forEach((page, pageIndex) => {
+      page.hidden = pageIndex !== welcomePageIndex;
+    });
+    el.welcomeDots.forEach((dot) => {
+      const active = Number(dot.dataset.welcomeTarget) === welcomePageIndex;
+      dot.classList.toggle('active', active);
+      if (active) dot.setAttribute('aria-current', 'page');
+      else dot.removeAttribute('aria-current');
+    });
+    el.welcomePrevBtn.disabled = welcomePageIndex === 0;
+    el.welcomeStartBtn.textContent = welcomePageIndex === lastIndex ? '开始使用' : '下一页 · 统计中心';
+    el.welcomeOverlay.setAttribute('aria-labelledby', `welcomeTitle${welcomePageIndex}`);
+    el.welcomeCard.scrollTop = 0;
+  }
+
   function showWelcome() {
+    setWelcomePage(0);
     el.welcomeOverlay.hidden = false;
     el.welcomeOverlay.classList.remove('is-closing');
     document.body.style.overflow = 'hidden';
@@ -2853,7 +2875,14 @@
     el.exportAllBtn.addEventListener('click', exportAllZip);
     el.previewAllBtn.addEventListener('click', loadAllPreviews);
     el.showWelcomeBtn.addEventListener('click', showWelcome);
-    el.welcomeStartBtn.addEventListener('click', () => hideWelcome(true));
+    el.welcomePrevBtn.addEventListener('click', () => setWelcomePage(welcomePageIndex - 1));
+    el.welcomeDots.forEach((dot) => {
+      dot.addEventListener('click', () => setWelcomePage(Number(dot.dataset.welcomeTarget)));
+    });
+    el.welcomeStartBtn.addEventListener('click', () => {
+      if (welcomePageIndex < el.welcomePages.length - 1) setWelcomePage(welcomePageIndex + 1);
+      else hideWelcome(true);
+    });
     el.welcomeOverlay.addEventListener('click', (event) => {
       if (event.target === el.welcomeOverlay) hideWelcome(true);
     });
@@ -3017,9 +3046,21 @@
     });
 
     window.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && !el.welcomeOverlay.hidden) {
-        hideWelcome(true);
-        return;
+      if (!el.welcomeOverlay.hidden) {
+        if (event.key === 'Escape') {
+          hideWelcome(true);
+          return;
+        }
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          setWelcomePage(welcomePageIndex - 1);
+          return;
+        }
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          setWelcomePage(welcomePageIndex + 1);
+          return;
+        }
       }
       if (event.key === 'Escape' && !el.imagePreviewOverlay.hidden) {
         closeImagePreview();
