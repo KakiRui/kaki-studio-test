@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3f1e9">
   <title>KAKI Studio · 号码归属查询</title>
-  <link rel="stylesheet" href="styles.css?v=kaki-studio-themes-11">
-  <link rel="stylesheet" href="view.css?v=kaki-studio-2">
+  <link rel="stylesheet" href="styles.css?v=kaki-studio-themes-12">
+  <link rel="stylesheet" href="view.css?v=kaki-studio-3">
 </head>
 <body class="public-view">
   <header class="public-header">
@@ -71,7 +71,54 @@
 
     function decodePayload(value) {
       try {
-        const data = JSON.parse(new TextDecoder().decode(base64UrlToBytes(value)));
+        const bytes = base64UrlToBytes(value);
+        if(bytes[0] === 2) {
+          let offset = 1;
+          const readVarint = () => {
+            let result = 0;
+            let factor = 1;
+            for(let i = 0; i < 4; i++) {
+              if(offset >= bytes.length) throw new Error('varint');
+              const byte = bytes[offset++];
+              result += (byte & 127) * factor;
+              if(!(byte & 128)) return result;
+              factor *= 128;
+            }
+            throw new Error('varint');
+          };
+          const decoder = new TextDecoder();
+          const readText = (maxLength) => {
+            const length = readVarint();
+            if(length < 1 || length > maxLength || offset + length > bytes.length) throw new Error('text');
+            const text = decoder.decode(bytes.subarray(offset, offset + length));
+            offset += length;
+            return text;
+          };
+          const total = readVarint();
+          if(!Number.isInteger(total) || total < 1 || total > 1000) return null;
+          const id = readText(240).trim().slice(0, 80);
+          const customerCount = readVarint();
+          if(customerCount < 0 || customerCount > 1000) return null;
+          const customers = [];
+          for(let i = 0; i < customerCount; i++) {
+            const name = readText(240).trim().slice(0, 60);
+            const count = readVarint();
+            if(!name || count < 1 || count > total) return null;
+            const nums = [];
+            let previous = 0;
+            for(let j = 0; j < count; j++) {
+              const delta = readVarint();
+              const number = previous + delta;
+              if(delta < 1 || number > total) return null;
+              nums.push(number);
+              previous = number;
+            }
+            customers.push({ name, nums });
+          }
+          return { id: id || '未命名档位', total, customers, theme: 'original' };
+        }
+
+        const data = JSON.parse(new TextDecoder().decode(bytes));
         const total = Number(data.t);
         if(data.v !== 1 || !Number.isInteger(total) || total < 1 || total > 1000 || !Array.isArray(data.c)) return null;
         const customers = data.c.map(item => {
@@ -147,7 +194,9 @@
       document.getElementById('publicSearch').focus();
     }
 
-    const encoded = location.hash.startsWith('#customers=') ? location.hash.slice('#customers='.length) : '';
+    const encoded = location.hash.startsWith('#customers=')
+      ? location.hash.slice('#customers='.length)
+      : location.hash.length > 1 ? location.hash.slice(1) : '';
     const data = encoded ? decodePayload(encoded) : null;
     if(data) renderView(data);
     else renderError();

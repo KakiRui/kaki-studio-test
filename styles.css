@@ -264,7 +264,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;max-width:100%;overflow-x:clip}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased;background-image:radial-gradient(var(--body-dot) .65px,transparent .65px);background-size:7px 7px;max-width:100%;overflow-x:clip;transition:background-color .25s,color .25s}
-button,input,select{font:inherit;color:inherit}
+button,input,select,textarea,option{font:inherit;color:inherit}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed}
 svg{display:block;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
@@ -409,7 +409,7 @@ svg{display:block;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap
 
 .workspace{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);align-items:start;gap:20px;min-width:0}
 .control-panel{padding:22px;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.live-dot{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--ink-faint);letter-spacing:.5px;padding:5px 7px;border:1px solid var(--line);border-radius:20px}
+.live-dot{display:flex;align-items:center;gap:5px;font-family:var(--sans);font-size:8px;color:var(--ink-faint);letter-spacing:.2px;padding:5px 7px;border:1px solid var(--line);border-radius:20px}
 .live-dot i{width:5px;height:5px;border-radius:50%;background:var(--lime-deep);box-shadow:0 0 0 3px var(--accent-halo)}
 .mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--paper-deep);border-radius:11px;padding:4px;margin:20px 0 22px}
 .mode-tab{border:0;background:transparent;padding:9px 6px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--ink-faint);transition:background .2s,color .2s,box-shadow .2s}

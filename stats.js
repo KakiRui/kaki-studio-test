@@ -265,6 +265,66 @@
         return bytes;
     }
 
+    function pushVarint(bytes, value) {
+        let number = Math.max(0, Math.floor(Number(value) || 0));
+        do {
+            let byte = number % 128;
+            number = Math.floor(number / 128);
+            if(number) byte += 128;
+            bytes.push(byte);
+        } while(number);
+    }
+
+    function readVarint(bytes, cursor) {
+        let value = 0;
+        let factor = 1;
+        for(let i = 0; i < 4; i++) {
+            if(cursor.offset >= bytes.length) throw new Error('varint');
+            const byte = bytes[cursor.offset++];
+            value += (byte & 127) * factor;
+            if(!(byte & 128)) return value;
+            factor *= 128;
+        }
+        throw new Error('varint');
+    }
+
+    function decodeCompactPublicBatch(bytes) {
+        if(bytes[0] !== 2) return null;
+        const cursor = { offset: 1 };
+        const textDecoder = new TextDecoder();
+        const total = readVarint(bytes, cursor);
+        if(!Number.isInteger(total) || total < 1 || total > 1000) return null;
+
+        const readText = (maxLength) => {
+            const length = readVarint(bytes, cursor);
+            if(length < 1 || length > maxLength || cursor.offset + length > bytes.length) throw new Error('text');
+            const value = textDecoder.decode(bytes.subarray(cursor.offset, cursor.offset + length));
+            cursor.offset += length;
+            return value;
+        };
+
+        const id = readText(240).trim().slice(0, 80);
+        const customerCount = readVarint(bytes, cursor);
+        if(customerCount < 0 || customerCount > 1000) return null;
+        const customers = [];
+        for(let i = 0; i < customerCount; i++) {
+            const name = readText(240).trim().slice(0, 60);
+            const count = readVarint(bytes, cursor);
+            if(!name || count < 1 || count > total) return null;
+            const nums = [];
+            let previous = 0;
+            for(let j = 0; j < count; j++) {
+                const delta = readVarint(bytes, cursor);
+                const number = previous + delta;
+                if(delta < 1 || number > total) return null;
+                nums.push(number);
+                previous = number;
+            }
+            customers.push({ name, nums });
+        }
+        return { id: id || '未命名档位', total, customers, theme: 'original' };
+    }
+
     function encodePublicBatch(batch) {
         const customers = batch.customers.map(customer => {
             const nums = [...new Set(customer.nums.flat().map(Number).filter(num =>
@@ -272,14 +332,33 @@
             ))].sort((a, b) => a - b);
             return nums.length ? [customer.name, nums] : null;
         }).filter(Boolean);
-        const theme = document.documentElement.dataset.theme || 'original';
-        const payload = { v: 1, n: batch.id, t: batch.total, c: customers, th: theme };
-        return bytesToBase64Url(new TextEncoder().encode(JSON.stringify(payload)));
+        const bytes = [2];
+        const textEncoder = new TextEncoder();
+        pushVarint(bytes, batch.total);
+        const title = textEncoder.encode(String(batch.id || '未命名档位').trim().slice(0, 80));
+        pushVarint(bytes, title.length);
+        bytes.push(...title);
+        pushVarint(bytes, customers.length);
+        customers.forEach(([name, nums]) => {
+            const nameBytes = textEncoder.encode(String(name || '').trim().slice(0, 60));
+            pushVarint(bytes, nameBytes.length);
+            bytes.push(...nameBytes);
+            pushVarint(bytes, nums.length);
+            let previous = 0;
+            nums.forEach(num => {
+                pushVarint(bytes, num - previous);
+                previous = num;
+            });
+        });
+        return bytesToBase64Url(Uint8Array.from(bytes));
     }
 
     function decodePublicBatch(value) {
         try {
-            const data = JSON.parse(new TextDecoder().decode(base64UrlToBytes(value)));
+            const bytes = base64UrlToBytes(value);
+            const compact = decodeCompactPublicBatch(bytes);
+            if(compact) return compact;
+            const data = JSON.parse(new TextDecoder().decode(bytes));
             const total = Number(data.t);
             if(data.v !== 1 || !Number.isInteger(total) || total < 1 || total > 1000 || !Array.isArray(data.c)) return null;
             const customers = data.c.map(item => {
@@ -300,7 +379,7 @@
     function buildCustomerShareLink() {
         const shareUrl = new URL('view.html', location.href);
         const baseUrl = shareUrl.toString();
-        return `${baseUrl}#customers=${encodePublicBatch(batches[currentIdx])}`;
+        return `${baseUrl}#${encodePublicBatch(batches[currentIdx])}`;
     }
 
     function openShareModal() {

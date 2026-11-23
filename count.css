@@ -39,9 +39,10 @@
 
 .stats-metric span {
   display: block;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 8.5px;
-  letter-spacing: .5px;
+  font-weight: 600;
+  letter-spacing: .1px;
   color: var(--ink-faint);
 }
 
@@ -245,6 +246,7 @@
   border-radius: 8px;
   background: var(--surface);
   color: var(--ink-soft);
+  font-family: var(--serif);
   font-weight: 650;
   cursor: pointer;
 }
@@ -317,8 +319,10 @@
   border: 0;
   background: none;
   color: var(--ink);
-  font: inherit;
+  font-family: var(--serif);
+  font-size: 13px;
   font-weight: 650;
+  line-height: 1.2;
   text-align: left;
   overflow-wrap: anywhere;
   cursor: text;
@@ -396,6 +400,7 @@
   border-radius: 7px;
   background: var(--accent);
   color: var(--primary-ink);
+  font-family: var(--serif);
   font-size: 12px;
   line-height: 1.2;
   text-align: center;
