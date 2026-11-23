@@ -1,7 +1,6 @@
 (() => {
   'use strict';
 
-  const MAX_CACHED_FILES = 80;
   const MAX_FULLSCREEN_LAYERS = 8;
   const MAX_COMPOSITE_LAYERS = 8;
   const MAX_FILE_BYTES = 60 * 1024 * 1024;
@@ -324,7 +323,7 @@
   }
 
   function fileSnapshot() {
-    return state.files.slice(0, MAX_CACHED_FILES).map((record, order) => ({
+    return state.files.map((record, order) => ({
       id: record.id,
       order,
       name: record.name,
@@ -339,10 +338,10 @@
   function persistImportedFiles() {
     const snapshot = fileSnapshot();
     persistQueue = persistQueue
-      .catch(() => null)
+      .catch(() => false)
       .then(async () => {
         const db = await openImageDb();
-        if (!db) return;
+        if (!db) return false;
         await new Promise((resolve, reject) => {
           const transaction = db.transaction(IMAGE_STORE_NAME, 'readwrite');
           const store = transaction.objectStore(IMAGE_STORE_NAME);
@@ -352,6 +351,7 @@
           transaction.onerror = () => reject(transaction.error || new Error('作品缓存写入失败'));
           transaction.onabort = () => reject(transaction.error || new Error('作品缓存写入中止'));
         });
+        return true;
       })
       .catch((error) => {
         console.warn(error);
@@ -359,6 +359,7 @@
           storageWarningShown = true;
           toast('浏览器本地空间不足，作品可能无法在刷新后恢复', 'error');
         }
+        return false;
       });
     return persistQueue;
   }
@@ -393,7 +394,6 @@
       const restored = records
         .filter((record) => record?.blob instanceof Blob)
         .sort((a, b) => Number(a.order) - Number(b.order))
-        .slice(0, MAX_CACHED_FILES)
         .map((record) => {
           const file = record.blob instanceof File
             ? record.blob
@@ -1594,15 +1594,13 @@
     syncStageTitle();
     updateActionAvailability();
     schedulePreview();
-    if (loaded.length) await persistImportedFiles();
+    const cacheSaved = loaded.length ? await persistImportedFiles() : false;
     el.dropZone.classList.remove('is-loading');
     el.dropZone.removeAttribute('aria-busy');
 
     if (loaded.length) {
-      const cacheNotice = state.files.length > MAX_CACHED_FILES
-        ? `；当前共 ${state.files.length} 张，刷新后仅恢复前 ${MAX_CACHED_FILES} 张缓存`
-        : '';
-      toast(`已加入 ${loaded.length} 张图片${cacheNotice}`);
+      const cacheNotice = cacheSaved ? '已自动保存，刷新后可恢复' : '自动保存未完成，刷新后可能无法恢复';
+      toast(`已加入 ${loaded.length} 张图片；当前队列 ${state.files.length} 张，${cacheNotice}`);
     }
     if (rejected.length) toast(rejected.slice(0, 2).join('；'), 'error');
   }
