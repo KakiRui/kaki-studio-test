@@ -1149,16 +1149,16 @@
   <div id="shareModal" class="action-modal-bg" onclick="closeShareModal(event)">
     <div class="action-modal" onclick="event.stopPropagation()">
       <h4>顾客查看链接</h4>
-          <p>只读快照包含号码归属和所有已有号码的顾客，不包含图片或其他档位。查看页使用固定简洁主题。</p>
+      <p>只读快照包含号码归属和所有已有号码的顾客，不包含图片或其他档位。查看页使用固定简洁主题。</p>
       <div class="share-link-row">
-        <input id="shareLinkInput" type="text" readonly aria-label="顾客查看链接" onclick="this.select()">
+        <input id="shareLinkInput" type="text" readonly aria-label="顾客查看短链接" placeholder="正在生成短链接…" onclick="this.select()">
         <button type="button" onclick="copyShareLink()">复制</button>
       </div>
       <div class="share-modal-actions">
         <button type="button" class="primary" onclick="shareCustomerLink()">分享给顾客</button>
         <button type="button" onclick="previewShareLink()">打开预览</button>
       </div>
-      <div class="share-note">链接已压缩，并保留生成时的数据快照；修改后需要重新生成。</div>
+      <div class="share-note" id="shareStatus" role="status">正在创建 7 天有效的只读短链接…</div>
       <button type="button" class="modal-cancel" style="margin-top:9px;" onclick="closeShareModal()">关闭</button>
     </div>
   </div>
@@ -1236,7 +1236,7 @@
 
   <script src="assets/vendor/jszip.min.js"></script>
   <script src="app.js?v=kaki-studio-8"></script>
-  <script src="stats.js?v=kaki-studio-9"></script>
+  <script src="stats.js?v=kaki-studio-10"></script>
   <script src="studio.js?v=kaki-studio-6"></script>
 </body>
 </html>

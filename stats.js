@@ -2,6 +2,9 @@
     const COUNT_DATA_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-counts-v1`;
     const COUNT_AI_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-count-ai-v1`;
     const STUDIO_THEME_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-theme-v1`;
+    const SHORTLINK_CACHE_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-shortlink-v1`;
+    const SHORTLINK_VIEWER_BASE = 'https://kakirui.github.io/kaki-studio-view/';
+    const SHORTLINK_API_BASE = 'https://kaki-studio-share.meowruii1010.workers.dev';
     const PUBLIC_THEME_IDS = new Set(['original', 'frost-indigo', 'pine-smoke', 'haitang', 'lotus-pink', 'qingxi', 'dianmo']);
     let batches = JSON.parse(localStorage.getItem(COUNT_DATA_KEY)) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
@@ -376,22 +379,62 @@
         }
     }
 
-    function buildCustomerShareLink() {
-        const shareUrl = new URL('view.html', location.href);
-        shareUrl.searchParams.set('v', '2');
-        const baseUrl = shareUrl.toString();
-        return `${baseUrl}#${encodePublicBatch(batches[currentIdx])}`;
+    function cachedShortLink(payload) {
+        try {
+            const cached = JSON.parse(localStorage.getItem(SHORTLINK_CACHE_KEY) || 'null');
+            if(cached?.payload === payload && cached?.url && Date.now() - Number(cached.createdAt || 0) < 6 * 24 * 60 * 60 * 1000) {
+                return cached.url;
+            }
+        } catch (_) {}
+        return '';
     }
 
-    function openShareModal() {
+    function saveShortLink(payload, url) {
+        try {
+            localStorage.setItem(SHORTLINK_CACHE_KEY, JSON.stringify({ payload, url, createdAt: Date.now() }));
+        } catch (_) {}
+    }
+
+    async function buildCustomerShareLink() {
+        const payload = encodePublicBatch(batches[currentIdx]);
+        const cached = cachedShortLink(payload);
+        if(cached) return cached;
+        if(!/^https:\/\//.test(SHORTLINK_API_BASE)) throw new Error('shortlink_not_configured');
+        const response = await fetch(`${SHORTLINK_API_BASE.replace(/\/$/, '')}/api/snapshot`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ d: payload })
+        });
+        if(!response.ok) throw new Error(`shortlink_${response.status}`);
+        const result = await response.json();
+        if(!result?.id) throw new Error('shortlink_invalid_response');
+        const url = `${SHORTLINK_VIEWER_BASE}?s=${encodeURIComponent(result.id)}`;
+        saveShortLink(payload, url);
+        return url;
+    }
+
+    async function openShareModal() {
         const occupied = new Set(batches[currentIdx].customers.flatMap(customer => customer.nums.flat())).size;
         if(!occupied) {
             alert('当前档位还没有已占用的号码，暂时没有可分享的归属记录。');
             return;
         }
+        const linkInput = document.getElementById('shareLinkInput');
+        const status = document.getElementById('shareStatus');
         document.getElementById('resetBatchModal').classList.remove('show');
-        document.getElementById('shareLinkInput').value = buildCustomerShareLink();
+        linkInput.value = '';
+        linkInput.placeholder = '正在生成短链接…';
+        status.textContent = '正在创建 7 天有效的只读短链接…';
         document.getElementById('shareModal').classList.add('show');
+        try {
+            const link = await buildCustomerShareLink();
+            linkInput.value = link;
+            status.textContent = '链接将在生成后第 7 天自动失效；数据修改后会自动生成新链接。';
+        } catch (error) {
+            console.warn(error);
+            linkInput.placeholder = '短链接暂时无法生成';
+            status.textContent = '短链接服务暂时不可用，请稍后再试。';
+        }
     }
 
     function closeShareModal(event) {
@@ -401,13 +444,19 @@
 
     function copyShareLink() {
         const link = document.getElementById('shareLinkInput').value;
-        if(!link) return;
+        if(!link) {
+            alert('短链接还在生成，请稍候。');
+            return;
+        }
         copyText(link);
     }
 
     async function shareCustomerLink() {
         const link = document.getElementById('shareLinkInput').value;
-        if(!link) return;
+        if(!link) {
+            alert('短链接还在生成，请稍候。');
+            return;
+        }
         if(navigator.share) {
             try {
                 await navigator.share({
@@ -425,7 +474,11 @@
 
     function previewShareLink() {
         const link = document.getElementById('shareLinkInput').value;
-        if(link) window.open(link, '_blank', 'noopener');
+        if(!link) {
+            alert('短链接还在生成，请稍候。');
+            return;
+        }
+        window.open(link, '_blank', 'noopener');
     }
 
     function filterPublicNumbers() {
