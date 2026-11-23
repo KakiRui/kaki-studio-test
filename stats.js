@@ -378,6 +378,7 @@
 
     function buildCustomerShareLink() {
         const shareUrl = new URL('view.html', location.href);
+        shareUrl.searchParams.set('v', '2');
         const baseUrl = shareUrl.toString();
         return `${baseUrl}#${encodePublicBatch(batches[currentIdx])}`;
     }
