@@ -408,7 +408,10 @@
         if(!response.ok) throw new Error(`shortlink_${response.status}`);
         const result = await response.json();
         if(!result?.id) throw new Error('shortlink_invalid_response');
-        const url = `${SHORTLINK_VIEWER_BASE}?s=${encodeURIComponent(result.id)}`;
+        const viewerUrl = new URL(SHORTLINK_VIEWER_BASE);
+        viewerUrl.searchParams.set('v', '2');
+        viewerUrl.searchParams.set('s', result.id);
+        const url = viewerUrl.toString();
         saveShortLink(payload, url);
         return url;
     }
