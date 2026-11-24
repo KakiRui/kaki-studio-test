@@ -383,7 +383,9 @@
         try {
             const cached = JSON.parse(localStorage.getItem(SHORTLINK_CACHE_KEY) || 'null');
             if(cached?.payload === payload && cached?.url && Date.now() - Number(cached.createdAt || 0) < 6 * 24 * 60 * 60 * 1000) {
-                return cached.url;
+                const url = new URL(cached.url);
+                url.searchParams.set('v', '2');
+                return url.toString();
             }
         } catch (_) {}
         return '';
