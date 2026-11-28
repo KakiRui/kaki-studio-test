@@ -2,9 +2,11 @@
     const COUNT_DATA_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-counts-v1`;
     const COUNT_AI_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-count-ai-v1`;
     const STUDIO_THEME_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-theme-v1`;
-    const SHORTLINK_CACHE_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-shortlink-v1`;
+    const SHORTLINK_CACHE_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-shortlink-v3`;
+    const GITHUB_SHARE_TOKEN_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-github-share-token-v1`;
     const SHORTLINK_VIEWER_BASE = 'https://kakirui.github.io/kaki-studio-view/';
-    const SHORTLINK_API_BASE = 'https://kaki-studio-share.meowruii1010.workers.dev';
+    const GITHUB_SHARE_OWNER = 'KakiRui';
+    const GITHUB_SHARE_REPO = 'kaki-studio-view';
     const PUBLIC_THEME_IDS = new Set(['original', 'frost-indigo', 'pine-smoke', 'haitang', 'lotus-pink', 'qingxi', 'dianmo']);
     let batches = JSON.parse(localStorage.getItem(COUNT_DATA_KEY)) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
@@ -384,7 +386,7 @@
             const cached = JSON.parse(localStorage.getItem(SHORTLINK_CACHE_KEY) || 'null');
             if(cached?.payload === payload && cached?.url && Date.now() - Number(cached.createdAt || 0) < 6 * 24 * 60 * 60 * 1000) {
                 const url = new URL(cached.url);
-                url.searchParams.set('v', '2');
+                url.searchParams.set('v', '3');
                 return url.toString();
             }
         } catch (_) {}
@@ -397,22 +399,84 @@
         } catch (_) {}
     }
 
+    function githubShareToken() {
+        try {
+            return localStorage.getItem(GITHUB_SHARE_TOKEN_KEY) || '';
+        } catch (_) {
+            return '';
+        }
+    }
+
+    function saveGithubShareToken() {
+        const input = document.getElementById('githubShareToken');
+        const token = input?.value.trim() || '';
+        if(!token) {
+            alert('请先填写 GitHub 发布令牌。');
+            return;
+        }
+        try {
+            localStorage.setItem(GITHUB_SHARE_TOKEN_KEY, token);
+            input.value = '';
+            document.getElementById('githubShareSettings').open = false;
+            openShareModal();
+        } catch (_) {
+            alert('无法保存 GitHub 发布令牌，请检查浏览器存储权限。');
+        }
+    }
+
+    function makeSnapshotId() {
+        const bytes = crypto.getRandomValues(new Uint8Array(9));
+        return bytesToBase64Url(bytes);
+    }
+
+    function bytesToStandardBase64(bytes) {
+        let binary = '';
+        const chunkSize = 0x8000;
+        for(let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+    }
+
     async function buildCustomerShareLink() {
         const payload = encodePublicBatch(batches[currentIdx]);
         const cached = cachedShortLink(payload);
         if(cached) return cached;
-        if(!/^https:\/\//.test(SHORTLINK_API_BASE)) throw new Error('shortlink_not_configured');
-        const response = await fetch(`${SHORTLINK_API_BASE.replace(/\/$/, '')}/api/snapshot`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ d: payload })
-        });
-        if(!response.ok) throw new Error(`shortlink_${response.status}`);
-        const result = await response.json();
-        if(!result?.id) throw new Error('shortlink_invalid_response');
+        const token = githubShareToken();
+        if(!token) throw new Error('github_token_missing');
+        const id = makeSnapshotId();
+        const file = {
+            v: 2,
+            d: payload,
+            createdAt: new Date().toISOString()
+        };
+        const content = bytesToStandardBase64(new TextEncoder().encode(JSON.stringify(file)));
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 20000);
+        let response;
+        try {
+            response = await fetch(`https://api.github.com/repos/${GITHUB_SHARE_OWNER}/${GITHUB_SHARE_REPO}/contents/snapshots/${id}.json`, {
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/vnd.github+json',
+                    Authorization: `Bearer ${token}`,
+                    'X-GitHub-Api-Version': '2022-11-28',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Add KAKI snapshot ${id}`,
+                    content
+                }),
+                signal: controller.signal
+            });
+        } finally {
+            window.clearTimeout(timeout);
+        }
+        if(response.status === 401 || response.status === 403) throw new Error('github_token_invalid');
+        if(!response.ok) throw new Error(`github_snapshot_${response.status}`);
         const viewerUrl = new URL(SHORTLINK_VIEWER_BASE);
-        viewerUrl.searchParams.set('v', '2');
-        viewerUrl.searchParams.set('s', result.id);
+        viewerUrl.searchParams.set('v', '3');
+        viewerUrl.searchParams.set('s', id);
         const url = viewerUrl.toString();
         saveShortLink(payload, url);
         return url;
@@ -426,8 +490,17 @@
         }
         const linkInput = document.getElementById('shareLinkInput');
         const status = document.getElementById('shareStatus');
+        const settings = document.getElementById('githubShareSettings');
         document.getElementById('resetBatchModal').classList.remove('show');
         linkInput.value = '';
+        if(!githubShareToken()) {
+            settings.open = true;
+            linkInput.placeholder = '首次使用请先保存 GitHub 发布令牌';
+            status.textContent = '首次使用需填写一次 GitHub 发布令牌。令牌只保存在当前浏览器，不会写入网页代码。';
+            document.getElementById('shareModal').classList.add('show');
+            return;
+        }
+        settings.open = false;
         linkInput.placeholder = '正在生成短链接…';
         status.textContent = '正在创建 7 天有效的只读短链接…';
         document.getElementById('shareModal').classList.add('show');
@@ -438,7 +511,9 @@
         } catch (error) {
             console.warn(error);
             linkInput.placeholder = '短链接暂时无法生成';
-            status.textContent = '短链接服务暂时不可用，请稍后再试。';
+            status.textContent = error?.message === 'github_token_invalid'
+                ? 'GitHub 发布令牌无效或权限不足，请重新生成令牌并保存。'
+                : '短链接暂时无法生成，请稍后再试。';
         }
     }
 
