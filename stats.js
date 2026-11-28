@@ -3,7 +3,7 @@
     const COUNT_AI_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-count-ai-v1`;
     const STUDIO_THEME_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-theme-v1`;
     const SHORTLINK_CACHE_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-shortlink-v3`;
-    const GITHUB_SHARE_TOKEN_KEY = `kaki-studio-${STUDIO_STORAGE_SCOPE}-github-share-token-v1`;
+    const GITHUB_SHARE_TOKEN_KEY = 'kaki-studio-github-share-token-v1';
     const SHORTLINK_VIEWER_BASE = 'https://kakirui.github.io/kaki-studio-view/';
     const GITHUB_SHARE_OWNER = 'KakiRui';
     const GITHUB_SHARE_REPO = 'kaki-studio-view';
@@ -401,7 +401,12 @@
 
     function githubShareToken() {
         try {
-            return localStorage.getItem(GITHUB_SHARE_TOKEN_KEY) || '';
+            const shared = localStorage.getItem(GITHUB_SHARE_TOKEN_KEY);
+            if(shared) return shared;
+            const legacyKey = `kaki-studio-${STUDIO_STORAGE_SCOPE}-github-share-token-v1`;
+            const legacy = localStorage.getItem(legacyKey) || '';
+            if(legacy) localStorage.setItem(GITHUB_SHARE_TOKEN_KEY, legacy);
+            return legacy;
         } catch (_) {
             return '';
         }
